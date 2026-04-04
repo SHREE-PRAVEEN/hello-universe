@@ -1,0 +1,246 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  USER
+}
+
+enum SolutionCategory {
+  AGRICULTURE
+  SECURITY
+  HOME_AUTOMATION
+  INDUSTRIAL_AUTOMATION
+}
+
+enum ProductCategory {
+  SENSORS
+  MOTORS
+  CONTROLLERS
+  KITS
+  POWER
+  CHASSIS
+  ACCESSORIES
+}
+
+enum OrderStatus {
+  PENDING
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
+
+model User {
+  id           String      @id @default(cuid())
+  name         String
+  email        String      @unique
+  passwordHash String
+  role         Role        @default(USER)
+  bio          String?
+  avatarUrl    String?
+
+  progresses   Progress[]
+  reviews      Review[]
+  guides       Guide[]
+  orders       Order[]
+  cart         Cart?
+  savedItems   SavedItem[]
+
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+}
+
+model Course {
+  id          String     @id @default(cuid())
+  title       String
+  slug        String     @unique
+  description String
+  level       String
+  thumbnail   String?
+  tags        String[]
+
+  lessons     Lesson[]
+
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+}
+
+model Lesson {
+  id          String     @id @default(cuid())
+  title       String
+  order       Int
+  videoUrl    String?
+  content     String
+  codeSnippet String?
+  courseId    String
+
+  course      Course     @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  progresses  Progress[]
+
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  @@unique([courseId, order])
+}
+
+model Progress {
+  id          String    @id @default(cuid())
+  userId      String
+  lessonId    String
+  completed   Boolean   @default(false)
+  percent     Int       @default(0)
+
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lesson      Lesson    @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@unique([userId, lessonId])
+}
+
+model Solution {
+  id                 String            @id @default(cuid())
+  title              String
+  slug               String            @unique
+  category           SolutionCategory
+  problemDescription String
+  components         Json
+  estimatedCost      Decimal           @db.Decimal(10, 2)
+  softwareTools      String[]
+  tags               String[]
+  buildGuideId       String?
+
+  buildGuide         Guide?            @relation(fields: [buildGuideId], references: [id], onDelete: SetNull)
+  savedByUsers       SavedItem[]
+
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @updatedAt
+}
+
+model Product {
+  id            String          @id @default(cuid())
+  name          String
+  slug          String          @unique
+  category      ProductCategory
+  description   String
+  price         Decimal         @db.Decimal(10, 2)
+  stock         Int             @default(0)
+  imageUrl      String?
+  tags          String[]
+
+  reviews       Review[]
+  cartItems     CartItem[]
+  orderItems    OrderItem[]
+
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+}
+
+model Cart {
+  id          String      @id @default(cuid())
+  userId      String      @unique
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items       CartItem[]
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+}
+
+model CartItem {
+  id          String      @id @default(cuid())
+  cartId      String
+  productId   String
+  quantity    Int         @default(1)
+
+  cart        Cart        @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  product     Product     @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  @@unique([cartId, productId])
+}
+
+model Order {
+  id          String       @id @default(cuid())
+  userId      String
+  status      OrderStatus  @default(PENDING)
+  totalAmount Decimal      @db.Decimal(10, 2)
+
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items       OrderItem[]
+
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+}
+
+model OrderItem {
+  id          String      @id @default(cuid())
+  orderId     String
+  productId   String
+  quantity    Int
+  price       Decimal     @db.Decimal(10, 2)
+
+  order       Order       @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product     Product     @relation(fields: [productId], references: [id], onDelete: Restrict)
+
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+}
+
+model Guide {
+  id             String      @id @default(cuid())
+  title          String
+  slug           String      @unique
+  description    String
+  materials      Json
+  wiringImageUrl String?
+  codeSnippet    String?
+  steps          Json
+  tags           String[]
+  authorId       String
+
+  author         User        @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  solutionLinks  Solution[]
+  savedByUsers   SavedItem[]
+
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+}
+
+model Review {
+  id          String      @id @default(cuid())
+  userId      String
+  productId   String
+  rating      Int
+  comment     String?
+
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product     Product     @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  @@unique([userId, productId])
+}
+
+model SavedItem {
+  id          String      @id @default(cuid())
+  userId      String
+  solutionId  String?
+  guideId     String?
+
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  solution    Solution?   @relation(fields: [solutionId], references: [id], onDelete: Cascade)
+  guide       Guide?      @relation(fields: [guideId], references: [id], onDelete: Cascade)
+
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+}
