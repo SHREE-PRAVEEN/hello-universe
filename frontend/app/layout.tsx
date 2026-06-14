@@ -1,36 +1,29 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { Nav } from "@/components/nav";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+import { Navbar } from "@/components/navbar";
+import { Footer } from "@/components/footer";
 
 export const metadata: Metadata = {
-  title: "Hello Universe!",
-  description: "A complete robotics ecosystem platform: learning, solutions, DIY, and marketplace.",
+  title: "Hello Universe – Hardware-Agnostic RobOps & Fleet Management",
+  description:
+    "India's leading B2B2B SaaS platform for Robot Operations and Fleet Management. Empower your autonomous systems with enterprise-grade telemetry, compliance, and interoperability.",
+  keywords: "RobOps, Fleet Management, Drone Software, UAV, AMR, India, SaaS, Autonomous Systems",
+  openGraph: {
+    title: "Hello Universe – Hardware-Agnostic RobOps & Fleet Management",
+    description: "Powering India's autonomous future. Enterprise fleet management for UAVs, AMRs and beyond.",
+    type: "website",
+  },
 };
 
 export default function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+}: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html
-      lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
-    >
-      <body className="min-h-full flex flex-col">
-        <Nav />
-        {children}
+    <html lang="en">
+      <body>
+        <Navbar />
+        <main>{children}</main>
+        <Footer />
       </body>
     </html>
   );

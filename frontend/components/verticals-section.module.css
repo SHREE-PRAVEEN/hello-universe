@@ -1,0 +1,136 @@
+.section {
+  background: var(--bg-secondary);
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 48px;
+}
+.header .section-subtitle {
+  margin: 0 auto;
+}
+
+/* Tabs */
+.tabs {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 32px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.tab {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  background: transparent;
+  border: 1px solid rgba(56,139,253,0.2);
+  border-radius: 99px;
+  color: #64748b;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+.tab:hover {
+  color: #94a3b8;
+  border-color: rgba(56,139,253,0.4);
+}
+.tabActive {
+  background: rgba(59,130,246,0.06);
+  box-shadow: 0 0 20px rgba(59,130,246,0.1);
+}
+
+/* Panel */
+.panel {
+  border: 1px solid;
+  border-radius: 20px;
+  padding: 40px;
+  backdrop-filter: blur(10px);
+  animation: fadeIn 0.3s ease;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.panelGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 40px;
+}
+
+.panelBlock {}
+
+.blockTitle {
+  font-family: 'Space Grotesk', system-ui, sans-serif;
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 16px;
+}
+
+.list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.listItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.875rem;
+  color: #94a3b8;
+  line-height: 1.5;
+}
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.statBox {
+  margin-top: 24px;
+  padding: 16px 20px;
+  border: 1px solid;
+  border-radius: 12px;
+  background: rgba(0,0,0,0.2);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.statNum {
+  font-family: 'Space Grotesk', system-ui, sans-serif;
+  font-size: 2rem;
+  font-weight: 700;
+}
+.statLabel {
+  font-size: 0.75rem;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.oemGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.oemTag {
+  padding: 6px 12px;
+  border: 1px solid;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  background: rgba(0,0,0,0.2);
+}
+
+@media (max-width: 900px) {
+  .panelGrid { grid-template-columns: 1fr; gap: 24px; }
+  .panel { padding: 24px; }
+}
