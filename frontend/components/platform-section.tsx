@@ -1,4 +1,6 @@
+"use client";
 import styles from "./platform-section.module.css";
+import { useScrollReveal } from "@/lib/use-scroll-reveal";
 
 const FEATURES = [
   {
@@ -60,8 +62,10 @@ const FEATURES = [
 ];
 
 export function PlatformSection() {
+  const sectionRef = useScrollReveal<HTMLElement>({ stagger: 80 });
+
   return (
-    <section className={`section ${styles.section}`} id="platform">
+    <section className={`section ${styles.section} reveal-up`} id="platform" ref={sectionRef}>
       <div className="container">
         {/* Header */}
         <div className={styles.header}>
@@ -78,13 +82,14 @@ export function PlatformSection() {
         {/* Grid */}
         <div className={styles.grid}>
           {FEATURES.map((f) => (
-            <div key={f.title} className={`glass-card ${styles.card}`}>
+            <div key={f.title} className={`glass-card ${styles.card} reveal-child`}>
               <div className={styles.iconRow}>
                 <span className={styles.icon}>{f.icon}</span>
                 <span className={`badge ${f.badge}`}>{f.badgeLabel}</span>
               </div>
               <h3 className={styles.cardTitle}>{f.title}</h3>
               <p className={styles.cardDesc}>{f.desc}</p>
+              <div className={styles.cardGlow} />
             </div>
           ))}
         </div>

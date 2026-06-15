@@ -1,10 +1,34 @@
+"use client";
 import styles from "./footer.module.css";
+import { useScrollReveal } from "@/lib/use-scroll-reveal";
+import Link from "next/link";
 
 const LINKS = {
-  Platform: ["Fleet Telemetry", "Mission Planner", "DGCA Compliance", "White-Label SDK", "API Reference"],
-  Products: ["Hello Universe Core", "Hello Universe Agri", "Hello Universe Defense", "Hello Universe Enterprise"],
-  Verticals: ["Agriculture", "Defense & Military", "Enterprise & Infrastructure"],
-  Company: ["About Us", "Blog", "Careers", "Press Kit", "Contact"],
+  Platform: [
+    { label: "Fleet Telemetry", href: "/#platform" },
+    { label: "Mission Planner", href: "/#platform" },
+    { label: "DGCA Compliance", href: "/#platform" },
+    { label: "White-Label SDK", href: "/#platform" },
+    { label: "API Reference", href: "/#platform" },
+  ],
+  Products: [
+    { label: "Hello Universe Core", href: "/#products" },
+    { label: "Hello Universe Agri", href: "/#products" },
+    { label: "Hello Universe Defense", href: "/#products" },
+    { label: "Hello Universe Enterprise", href: "/#products" },
+  ],
+  Learn: [
+    { label: "Courses", href: "/courses" },
+    { label: "Solutions", href: "/solutions" },
+    { label: "DIY Guides", href: "/guides" },
+    { label: "Marketplace", href: "/marketplace" },
+  ],
+  Company: [
+    { label: "About Us", href: "/#about" },
+    { label: "Blog", href: "#" },
+    { label: "Careers", href: "#" },
+    { label: "Contact", href: "/#contact" },
+  ],
 };
 
 /* ── Hello Universe mini-logo (compass rose variant) ── */
@@ -39,8 +63,10 @@ function HULogoMini() {
 }
 
 export function Footer() {
+  const sectionRef = useScrollReveal<HTMLElement>();
+
   return (
-    <footer className={styles.footer}>
+    <footer className={`${styles.footer} reveal-fade`} ref={sectionRef}>
       <div className="divider" />
       <div className={`container ${styles.inner}`}>
         {/* Brand */}
@@ -60,8 +86,13 @@ export function Footer() {
             <span className="badge badge-emerald">ISO 27001</span>
           </div>
           <div className={styles.socials}>
-            {["LinkedIn", "Twitter", "GitHub", "YouTube"].map((s) => (
-              <a key={s} href="#" className={styles.social} aria-label={s}>{s[0]}</a>
+            {[
+              { label: "LinkedIn", icon: "Li" },
+              { label: "Twitter", icon: "𝕏" },
+              { label: "GitHub", icon: "GH" },
+              { label: "YouTube", icon: "YT" },
+            ].map((s) => (
+              <a key={s.label} href="#" className={styles.social} aria-label={s.label}>{s.icon}</a>
             ))}
           </div>
         </div>
@@ -72,8 +103,8 @@ export function Footer() {
             <h4 className={styles.colTitle}>{section}</h4>
             <ul className={styles.colLinks}>
               {links.map((l) => (
-                <li key={l}>
-                  <a href="#" className={styles.colLink}>{l}</a>
+                <li key={l.label}>
+                  <Link href={l.href} className={styles.colLink}>{l.label}</Link>
                 </li>
               ))}
             </ul>

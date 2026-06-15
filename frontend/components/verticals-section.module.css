@@ -49,9 +49,19 @@
   border-radius: 20px;
   padding: 40px;
   backdrop-filter: blur(10px);
-  animation: fadeIn 0.3s ease;
+  transition: opacity 0.2s ease, transform 0.2s ease;
 }
-@keyframes fadeIn {
+
+.panelIn {
+  opacity: 1;
+  transform: translateY(0);
+  animation: panelFadeIn 0.35s ease;
+}
+.panelOut {
+  opacity: 0;
+  transform: translateY(6px);
+}
+@keyframes panelFadeIn {
   from { opacity: 0; transform: translateY(8px); }
   to { opacity: 1; transform: translateY(0); }
 }
@@ -128,6 +138,10 @@
   font-size: 0.8rem;
   font-weight: 500;
   background: rgba(0,0,0,0.2);
+  transition: all 0.2s ease;
+}
+.oemTag:hover {
+  background: rgba(0,0,0,0.35);
 }
 
 @media (max-width: 900px) {

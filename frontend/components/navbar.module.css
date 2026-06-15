@@ -87,6 +87,12 @@
 .link:hover::after {
   width: 100%;
 }
+.linkActive {
+  color: #f0f6ff;
+}
+.linkActive::after {
+  width: 100%;
+}
 
 /* Actions */
 .actions {

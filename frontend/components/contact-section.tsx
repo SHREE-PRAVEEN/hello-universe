@@ -1,12 +1,14 @@
 "use client";
 import { useState } from "react";
 import styles from "./contact-section.module.css";
+import { useScrollReveal } from "@/lib/use-scroll-reveal";
 
 const INQUIRY_TYPES = ["OEM Partnership", "Enterprise Demo", "Defense Inquiry", "General Inquiry"];
 
 export function ContactSection() {
   const [sent, setSent] = useState(false);
   const [type, setType] = useState(INQUIRY_TYPES[0]);
+  const sectionRef = useScrollReveal<HTMLElement>();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -14,7 +16,7 @@ export function ContactSection() {
   };
 
   return (
-    <section className={`section ${styles.section}`} id="contact">
+    <section className={`section ${styles.section} reveal-up`} id="contact" ref={sectionRef}>
       <div className="container">
         <div className={styles.grid}>
           {/* Left */}

@@ -1,19 +1,20 @@
 "use client";
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import styles from "./navbar.module.css";
 
 const navLinks = [
-  { label: "Platform", href: "#platform" },
-  { label: "Products", href: "#products" },
-  { label: "Verticals", href: "#verticals" },
-  { label: "Pricing", href: "#pricing" },
-  { label: "About", href: "#about" },
+  { label: "Platform", href: "/#platform", isSection: true },
+  { label: "Courses", href: "/courses", isSection: false },
+  { label: "Solutions", href: "/solutions", isSection: false },
+  { label: "Marketplace", href: "/marketplace", isSection: false },
+  { label: "Guides", href: "/guides", isSection: false },
+  { label: "Pricing", href: "/#pricing", isSection: true },
 ];
 
 /* ── Hello Universe logo SVG ── compass rose + arc rings */
 function HULogo({ size = 36 }: { size?: number }) {
-  /* arc counts for top (cyan) and bottom (gold) */
   const arcCount = 12;
   const arcGaps = Array.from({ length: arcCount }, (_, i) => i);
 
@@ -105,31 +106,23 @@ function HULogo({ size = 36 }: { size?: number }) {
         );
       })}
 
-      {/* ── Compass rose – 4 cardinal points (elongated) ── */}
-      {/* North – cyan with gold tip */}
+      {/* ── Compass rose – 4 cardinal points ── */}
       <polygon points="100,58 96,90 104,90" fill="#00c5e8" opacity="0.95"/>
       <polygon points="100,58 98,70 102,70" fill="#f5a520" opacity="0.85"/>
-      {/* South – cyan */}
       <polygon points="100,142 96,110 104,110" fill="#00c5e8" opacity="0.85"/>
       <polygon points="100,142 98,130 102,130" fill="#1e5dbd" opacity="0.7"/>
-      {/* East – cyan */}
       <polygon points="142,100 110,96 110,104" fill="#00c5e8" opacity="0.9"/>
       <polygon points="142,100 130,98 130,102" fill="#1a4a8a" opacity="0.6"/>
-      {/* West – cyan */}
       <polygon points="58,100 90,96 90,104" fill="#00c5e8" opacity="0.9"/>
       <polygon points="58,100 70,98 70,102" fill="#1a4a8a" opacity="0.6"/>
 
-      {/* ── Compass rose – 4 intercardinal points (shorter) ── */}
-      {/* NE */}
+      {/* ── Intercardinal points ── */}
       <polygon points="100,68 96,92 104,92" fill="#1e5dbd" opacity="0.5" transform="rotate(45 100 100)"/>
-      {/* NW */}
       <polygon points="100,68 96,92 104,92" fill="#1e5dbd" opacity="0.45" transform="rotate(-45 100 100)"/>
-      {/* SE */}
       <polygon points="100,132 96,108 104,108" fill="#1a4a8a" opacity="0.45" transform="rotate(45 100 100)"/>
-      {/* SW */}
       <polygon points="100,132 96,108 104,108" fill="#1a4a8a" opacity="0.4" transform="rotate(-45 100 100)"/>
 
-      {/* ── Thin cross-hair lines ── */}
+      {/* ── Cross-hair lines ── */}
       <line x1="100" y1="60" x2="100" y2="80" stroke="rgba(255,255,255,0.12)" strokeWidth="0.5"/>
       <line x1="100" y1="120" x2="100" y2="140" stroke="rgba(255,255,255,0.12)" strokeWidth="0.5"/>
       <line x1="60" y1="100" x2="80" y2="100" stroke="rgba(255,255,255,0.12)" strokeWidth="0.5"/>
@@ -139,15 +132,14 @@ function HULogo({ size = 36 }: { size?: number }) {
       <circle cx="100" cy="100" r="18" fill="url(#nav-sphere-grad)"/>
       <circle cx="100" cy="100" r="18" fill="none" stroke="#1e5dbd" strokeWidth="1" opacity="0.4"/>
 
-      {/* Globe latitude lines */}
+      {/* Globe lines */}
       <ellipse cx="100" cy="93" rx="16" ry="4.5" stroke="#1e5dbd" strokeWidth="1.2" fill="none" opacity="0.45"/>
       <ellipse cx="100" cy="100" rx="18" ry="5.5" stroke="#1e5dbd" strokeWidth="1.2" fill="none" opacity="0.5"/>
       <ellipse cx="100" cy="107" rx="16" ry="4.5" stroke="#1e5dbd" strokeWidth="1.2" fill="none" opacity="0.45"/>
-      {/* Globe meridian */}
       <ellipse cx="100" cy="100" rx="7" ry="18" stroke="#1e5dbd" strokeWidth="1" fill="none" opacity="0.35"/>
       <ellipse cx="100" cy="100" rx="13" ry="18" stroke="#1e5dbd" strokeWidth="0.8" fill="none" opacity="0.25"/>
 
-      {/* ── Subtle glow around compass ── */}
+      {/* ── Subtle glow ── */}
       <circle cx="100" cy="100" r="46" fill="none" stroke="#00c5e8" strokeWidth="0.8" opacity="0.15"/>
     </svg>
   );
@@ -156,12 +148,18 @@ function HULogo({ size = 36 }: { size?: number }) {
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const pathname = usePathname();
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 40);
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  const isActive = (href: string) => {
+    if (href.startsWith("/#")) return pathname === "/";
+    return pathname === href || pathname.startsWith(href + "/");
+  };
 
   return (
     <nav className={`${styles.nav} ${scrolled ? styles.scrolled : ""}`}>
@@ -180,17 +178,25 @@ export function Navbar() {
         <ul className={styles.links}>
           {navLinks.map((l) => (
             <li key={l.label}>
-              <a href={l.href} className={styles.link}>{l.label}</a>
+              {l.isSection ? (
+                <a href={l.href} className={`${styles.link} ${isActive(l.href) ? styles.linkActive : ""}`}>
+                  {l.label}
+                </a>
+              ) : (
+                <Link href={l.href} className={`${styles.link} ${isActive(l.href) ? styles.linkActive : ""}`}>
+                  {l.label}
+                </Link>
+              )}
             </li>
           ))}
         </ul>
 
         {/* CTA */}
         <div className={styles.actions}>
-          <a href="#contact" className="btn-secondary" style={{fontSize:"0.85rem", padding:"9px 20px"}}>
+          <a href="/#contact" className="btn-secondary" style={{fontSize:"0.85rem", padding:"9px 20px"}}>
             Contact Sales
           </a>
-          <a href="#demo" className="btn-primary" style={{fontSize:"0.85rem", padding:"9px 20px"}}>
+          <a href="/#demo" className="btn-primary" style={{fontSize:"0.85rem", padding:"9px 20px"}}>
             Request Demo
           </a>
           {/* Hamburger */}
@@ -210,13 +216,19 @@ export function Navbar() {
       {/* Mobile Menu */}
       <div className={`${styles.mobileMenu} ${menuOpen ? styles.mobileOpen : ""}`}>
         {navLinks.map((l) => (
-          <a key={l.label} href={l.href} className={styles.mobileLink} onClick={() => setMenuOpen(false)}>
-            {l.label}
-          </a>
+          l.isSection ? (
+            <a key={l.label} href={l.href} className={styles.mobileLink} onClick={() => setMenuOpen(false)}>
+              {l.label}
+            </a>
+          ) : (
+            <Link key={l.label} href={l.href} className={styles.mobileLink} onClick={() => setMenuOpen(false)}>
+              {l.label}
+            </Link>
+          )
         ))}
         <div className={styles.mobileCtas}>
-          <a href="#contact" className="btn-secondary" onClick={() => setMenuOpen(false)}>Contact Sales</a>
-          <a href="#demo" className="btn-primary" onClick={() => setMenuOpen(false)}>Request Demo</a>
+          <a href="/#contact" className="btn-secondary" onClick={() => setMenuOpen(false)}>Contact Sales</a>
+          <a href="/#demo" className="btn-primary" onClick={() => setMenuOpen(false)}>Request Demo</a>
         </div>
       </div>
     </nav>

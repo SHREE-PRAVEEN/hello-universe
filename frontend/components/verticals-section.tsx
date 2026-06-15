@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import styles from "./verticals-section.module.css";
+import { useScrollReveal } from "@/lib/use-scroll-reveal";
 
 const VERTICALS = [
   {
@@ -62,10 +63,21 @@ const VERTICALS = [
 
 export function VerticalsSection() {
   const [active, setActive] = useState(0);
+  const [transitioning, setTransitioning] = useState(false);
   const v = VERTICALS[active];
+  const sectionRef = useScrollReveal<HTMLElement>();
+
+  const handleTabClick = (i: number) => {
+    if (i === active) return;
+    setTransitioning(true);
+    setTimeout(() => {
+      setActive(i);
+      setTransitioning(false);
+    }, 200);
+  };
 
   return (
-    <section className={`section ${styles.section}`} id="verticals">
+    <section className={`section ${styles.section} reveal-up`} id="verticals" ref={sectionRef}>
       <div className="container">
         {/* Header */}
         <div className={styles.header}>
@@ -86,7 +98,7 @@ export function VerticalsSection() {
               key={vert.id}
               className={`${styles.tab} ${active === i ? styles.tabActive : ""}`}
               style={active === i ? { borderColor: vert.color, color: vert.color } : {}}
-              onClick={() => setActive(i)}
+              onClick={() => handleTabClick(i)}
               id={`vertical-tab-${vert.id}`}
             >
               <span>{vert.icon}</span>
@@ -97,9 +109,8 @@ export function VerticalsSection() {
 
         {/* Content panel */}
         <div
-          className={styles.panel}
+          className={`${styles.panel} ${transitioning ? styles.panelOut : styles.panelIn}`}
           style={{ borderColor: v.borderColor, background: v.colorBg }}
-          key={v.id}
         >
           <div className={styles.panelGrid}>
             {/* Applications */}

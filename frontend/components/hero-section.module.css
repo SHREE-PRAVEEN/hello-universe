@@ -49,6 +49,19 @@
   background: radial-gradient(circle, rgba(30,93,189,0.08) 0%, transparent 70%);
   filter: blur(100px);
 }
+.gradientMesh {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 20% 20%, rgba(0,197,232,0.06) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 80%, rgba(245,165,32,0.04) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 50%, rgba(37,99,235,0.03) 0%, transparent 60%);
+  animation: meshShift 12s ease-in-out infinite alternate;
+}
+@keyframes meshShift {
+  0% { opacity: 0.8; transform: scale(1); }
+  100% { opacity: 1; transform: scale(1.05); }
+}
 .gridOverlay {
   position: absolute;
   inset: 0;
@@ -154,8 +167,11 @@
   border-color: rgba(56,139,253,0.3);
 }
 
-/* Hero Image */
-.imageWrapper {
+/* ══════════════════════════════════════════════════════
+   ANIMATED DASHBOARD MOCKUP
+   ══════════════════════════════════════════════════════ */
+
+.dashboardWrapper {
   position: relative;
   z-index: 1;
   width: 100%;
@@ -164,20 +180,226 @@
   padding: 0 24px;
   animation: fadeInUp 0.7s ease 0.6s both;
 }
-.imageGlow {
+
+.dashboardGlow {
   position: absolute;
   inset: -40px;
   background: radial-gradient(ellipse at center, rgba(0,197,232,0.10) 0%, transparent 70%);
   pointer-events: none;
   z-index: 0;
 }
-.heroImage {
+
+.dashboard {
+  position: relative;
+  background: linear-gradient(145deg, rgba(6,18,32,0.98), rgba(3,13,26,0.95));
+  border: 1px solid rgba(0,197,232,0.2);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 24px 80px rgba(0,0,0,0.6), 0 0 40px rgba(0,197,232,0.08);
+}
+
+/* Dashboard Top Bar */
+.dashTopBar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 20px;
+  background: rgba(0,0,0,0.3);
+  border-bottom: 1px solid rgba(0,197,232,0.1);
+}
+.dashDots {
+  display: flex;
+  gap: 6px;
+}
+.dashDots span {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: block;
+}
+.dashUrl {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  color: #475569;
+  flex: 1;
+  text-align: center;
+}
+.dashStatus {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.7rem;
+  color: #10b981;
+  font-weight: 600;
+}
+.statusDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #10b981;
+  animation: pulseStatus 2s ease-in-out infinite;
+}
+@keyframes pulseStatus {
+  0%, 100% { opacity: 1; box-shadow: 0 0 4px #10b981; }
+  50% { opacity: 0.5; box-shadow: 0 0 12px #10b981; }
+}
+
+/* Dashboard Body */
+.dashBody {
+  display: grid;
+  grid-template-columns: 160px 1fr;
+  min-height: 320px;
+}
+
+/* Sidebar */
+.dashSidebar {
+  padding: 16px 12px;
+  border-right: 1px solid rgba(0,197,232,0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.sideItem {
+  font-size: 0.72rem;
+  color: #475569;
+  padding: 8px 10px;
+  border-radius: 8px;
+  cursor: default;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+.sideItemActive {
+  background: rgba(0,197,232,0.08);
+  color: #00c5e8;
+  border: 1px solid rgba(0,197,232,0.2);
+}
+
+/* Main */
+.dashMain {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Stats */
+.dashStats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+.dashStatCard {
+  padding: 14px 12px;
+  background: rgba(0,0,0,0.2);
+  border: 1px solid rgba(0,197,232,0.08);
+  border-radius: 10px;
+  text-align: center;
+}
+.dashStatValue {
+  font-family: 'Space Grotesk', system-ui, sans-serif;
+  font-size: 1.3rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+.dashStatLabel {
+  font-size: 0.65rem;
+  color: #475569;
+  margin-top: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Chart */
+.dashChart {
+  padding: 16px;
+  background: rgba(0,0,0,0.15);
+  border: 1px solid rgba(0,197,232,0.06);
+  border-radius: 10px;
+}
+.chartTitle {
+  font-size: 0.72rem;
+  color: #64748b;
+  margin-bottom: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.chartSvg {
   width: 100%;
   height: auto;
-  border-radius: 16px;
-  border: 1px solid rgba(0,197,232,0.2);
-  box-shadow: 0 24px 80px rgba(0,0,0,0.6), 0 0 40px rgba(0,197,232,0.1);
-  display: block;
+}
+.chartLine {
+  stroke-dasharray: 1600;
+  stroke-dashoffset: 1600;
+  animation: drawLine 2s ease 1s forwards;
+}
+.chartArea {
+  opacity: 0;
+  animation: fadeChartArea 1s ease 2.5s forwards;
+}
+.chartDot {
+  opacity: 0;
+  animation: fadeInDot 0.3s ease forwards;
+  animation-delay: 2.5s;
+}
+@keyframes drawLine {
+  to { stroke-dashoffset: 0; }
+}
+@keyframes fadeChartArea {
+  to { opacity: 0.6; }
+}
+@keyframes fadeInDot {
+  to { opacity: 1; }
+}
+
+/* Map */
+.dashMap {
+  padding: 16px;
+  background: rgba(0,0,0,0.15);
+  border: 1px solid rgba(0,197,232,0.06);
+  border-radius: 10px;
+  position: relative;
+  min-height: 100px;
+}
+.mapGrid {
+  position: relative;
+  width: 100%;
+  height: 80px;
+  background:
+    linear-gradient(rgba(0,197,232,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,197,232,0.03) 1px, transparent 1px);
+  background-size: 30px 30px;
+  border-radius: 6px;
+}
+.dronePin {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+}
+.dronePinDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #00c5e8;
+  animation: pulseDrone 2s ease-in-out infinite;
+}
+.dronePinRing {
+  position: absolute;
+  top: -4px;
+  left: -4px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 1px solid rgba(0,197,232,0.4);
+  animation: expandDroneRing 2s ease-in-out infinite;
+}
+@keyframes pulseDrone {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.7; transform: scale(0.8); }
+}
+@keyframes expandDroneRing {
+  0% { transform: scale(1); opacity: 0.6; }
+  100% { transform: scale(2.5); opacity: 0; }
 }
 
 /* Floating cards */
@@ -242,4 +464,7 @@
   .hero { padding-top: 100px; }
   .floatCard { display: none; }
   .trustLogos { gap: 10px; }
+  .dashBody { grid-template-columns: 1fr; }
+  .dashSidebar { display: none; }
+  .dashStats { grid-template-columns: repeat(2, 1fr); }
 }

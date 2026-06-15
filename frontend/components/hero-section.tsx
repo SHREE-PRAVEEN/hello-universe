@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import Image from "next/image";
+import { Particles } from "./particles";
 import styles from "./hero-section.module.css";
 
 const ROTATING_WORDS = ["Drones", "AMRs", "UAVs", "Fleets", "Swarms"];
@@ -28,7 +28,9 @@ export function HeroSection() {
         <div className={styles.orb1} />
         <div className={styles.orb2} />
         <div className={styles.orb3} />
+        <div className={styles.gradientMesh} />
         <div className={styles.gridOverlay} />
+        <Particles count={50} />
       </div>
 
       <div className={`container ${styles.content}`}>
@@ -81,17 +83,98 @@ export function HeroSection() {
         </div>
       </div>
 
-      {/* Hero image */}
-      <div className={styles.imageWrapper}>
-        <div className={styles.imageGlow} />
-        <Image
-          src="/hero_robops.png"
-          alt="Hello Universe fleet management dashboard"
-          width={1200}
-          height={675}
-          className={styles.heroImage}
-          priority
-        />
+      {/* Animated Dashboard Mockup */}
+      <div className={styles.dashboardWrapper}>
+        <div className={styles.dashboardGlow} />
+        <div className={styles.dashboard}>
+          {/* Top bar */}
+          <div className={styles.dashTopBar}>
+            <div className={styles.dashDots}>
+              <span style={{ background: "#f43f5e" }} />
+              <span style={{ background: "#f5a520" }} />
+              <span style={{ background: "#10b981" }} />
+            </div>
+            <span className={styles.dashUrl}>app.hellouniv.in/fleet-ops</span>
+            <div className={styles.dashStatus}>
+              <span className={styles.statusDot} />
+              Live
+            </div>
+          </div>
+
+          {/* Dashboard body */}
+          <div className={styles.dashBody}>
+            {/* Sidebar */}
+            <div className={styles.dashSidebar}>
+              {["⊞ Dashboard", "🛰️ Fleet", "📡 Telemetry", "📋 Missions", "⚙️ Settings"].map((item, i) => (
+                <div key={item} className={`${styles.sideItem} ${i === 0 ? styles.sideItemActive : ""}`}>
+                  {item}
+                </div>
+              ))}
+            </div>
+
+            {/* Main content */}
+            <div className={styles.dashMain}>
+              {/* Stats row */}
+              <div className={styles.dashStats}>
+                {[
+                  { label: "Active Drones", value: "142", color: "#10b981" },
+                  { label: "Missions Today", value: "38", color: "#3b82f6" },
+                  { label: "Uptime", value: "99.8%", color: "#f5a520" },
+                  { label: "Compliance", value: "DGCA ✓", color: "#00c5e8" },
+                ].map((s) => (
+                  <div key={s.label} className={styles.dashStatCard}>
+                    <div className={styles.dashStatValue} style={{ color: s.color }}>{s.value}</div>
+                    <div className={styles.dashStatLabel}>{s.label}</div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Chart area */}
+              <div className={styles.dashChart}>
+                <div className={styles.chartTitle}>Fleet Telemetry — 24h</div>
+                <svg viewBox="0 0 600 120" className={styles.chartSvg}>
+                  <defs>
+                    <linearGradient id="chart-grad" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="rgba(0,197,232,0.3)" />
+                      <stop offset="100%" stopColor="rgba(0,197,232,0)" />
+                    </linearGradient>
+                  </defs>
+                  <path
+                    d="M0,80 C50,70 100,40 150,55 C200,70 250,20 300,35 C350,50 400,15 450,25 C500,35 550,10 600,20"
+                    fill="none" stroke="#00c5e8" strokeWidth="2"
+                    className={styles.chartLine}
+                  />
+                  <path
+                    d="M0,80 C50,70 100,40 150,55 C200,70 250,20 300,35 C350,50 400,15 450,25 C500,35 550,10 600,20 L600,120 L0,120 Z"
+                    fill="url(#chart-grad)" className={styles.chartArea}
+                  />
+                  {/* Data points */}
+                  {[[0,80],[150,55],[300,35],[450,25],[600,20]].map(([cx,cy], i) => (
+                    <circle key={i} cx={cx} cy={cy} r="3" fill="#00c5e8" className={styles.chartDot} style={{ animationDelay: `${i * 0.2}s` }}/>
+                  ))}
+                </svg>
+              </div>
+
+              {/* Map area */}
+              <div className={styles.dashMap}>
+                <div className={styles.chartTitle}>Live Fleet Map</div>
+                <div className={styles.mapGrid}>
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <div key={i} className={styles.dronePin} style={{
+                      left: `${15 + Math.random() * 70}%`,
+                      top: `${15 + Math.random() * 70}%`,
+                      animationDelay: `${i * 0.3}s`
+                    }}>
+                      <div className={styles.dronePinDot} />
+                      <div className={styles.dronePinRing} />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* Floating cards */}
         <div className={`${styles.floatCard} ${styles.floatCard1}`}>
           <div className={styles.dot} style={{ background: "#10b981" }} />

@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import styles from "./stats-section.module.css";
+import { useScrollReveal } from "@/lib/use-scroll-reveal";
 
 const STATS = [
   { value: 13, suffix: "B", prefix: "$", label: "Indian Drone Market by 2030", sub: "Projected valuation" },
@@ -32,7 +33,7 @@ function StatCard({ stat, animate }: { stat: typeof STATS[0]; animate: boolean }
   const val = useCountUp(stat.value, 1600, animate);
   const display = stat.value % 1 === 0 ? Math.round(val) : val.toFixed(1);
   return (
-    <div className={`glass-card ${styles.card}`}>
+    <div className={`glass-card ${styles.card} reveal-child`}>
       <div className={styles.value}>
         <span className={styles.prefix}>{stat.prefix}</span>
         <span className="gradient-text">{display}</span>
@@ -47,6 +48,7 @@ function StatCard({ stat, animate }: { stat: typeof STATS[0]; animate: boolean }
 export function StatsSection() {
   const ref = useRef<HTMLDivElement>(null);
   const [animate, setAnimate] = useState(false);
+  const sectionRef = useScrollReveal<HTMLElement>({ stagger: 100 });
 
   useEffect(() => {
     const obs = new IntersectionObserver(
@@ -58,7 +60,10 @@ export function StatsSection() {
   }, []);
 
   return (
-    <section className={`section ${styles.section}`} ref={ref}>
+    <section className={`section ${styles.section} reveal-up`} ref={(el) => {
+      (sectionRef as React.MutableRefObject<HTMLElement | null>).current = el;
+      (ref as React.MutableRefObject<HTMLDivElement | null>).current = el;
+    }}>
       <div className="divider" />
       <div className="container">
         <div className={styles.grid}>

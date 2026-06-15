@@ -1,12 +1,15 @@
+"use client";
+import { useState } from "react";
 import styles from "./pricing-section.module.css";
+import { useScrollReveal } from "@/lib/use-scroll-reveal";
 
 const PLANS = [
   {
     id: "starter",
     name: "Starter",
     desc: "For small OEMs and pilot programs",
-    price: "₹15,000",
-    period: "/month",
+    priceMonthly: 15000,
+    priceAnnual: 12000,
     highlight: false,
     features: [
       "Up to 10 robot connections",
@@ -23,8 +26,8 @@ const PLANS = [
     id: "professional",
     name: "Professional",
     desc: "For growing fleets and enterprise OEMs",
-    price: "₹45,000",
-    period: "/month",
+    priceMonthly: 45000,
+    priceAnnual: 36000,
     highlight: true,
     features: [
       "Up to 50 robot connections",
@@ -43,8 +46,8 @@ const PLANS = [
     id: "scale",
     name: "Scale",
     desc: "For large fleets and defense integrators",
-    price: "₹85,000",
-    period: "/month",
+    priceMonthly: 85000,
+    priceAnnual: 68000,
     highlight: false,
     features: [
       "Unlimited robot connections",
@@ -63,8 +66,8 @@ const PLANS = [
     id: "oem",
     name: "OEM White-Label",
     desc: "For hardware manufacturers as distribution channel",
-    price: "Custom",
-    period: "",
+    priceMonthly: 0,
+    priceAnnual: 0,
     highlight: false,
     features: [
       "Full platform white-labeling",
@@ -82,8 +85,17 @@ const PLANS = [
 ];
 
 export function PricingSection() {
+  const [annual, setAnnual] = useState(false);
+  const sectionRef = useScrollReveal<HTMLElement>({ stagger: 100 });
+
+  const formatPrice = (plan: typeof PLANS[0]) => {
+    if (plan.priceMonthly === 0) return "Custom";
+    const price = annual ? plan.priceAnnual : plan.priceMonthly;
+    return `₹${price.toLocaleString("en-IN")}`;
+  };
+
   return (
-    <section className={`section ${styles.section}`} id="pricing">
+    <section className={`section ${styles.section} reveal-up`} id="pricing" ref={sectionRef}>
       <div className="container">
         {/* Header */}
         <div className={styles.header}>
@@ -95,6 +107,23 @@ export function PricingSection() {
           <p className="section-subtitle">
             All plans include DGCA compliance, real-time telemetry, and our hardware-agnostic SDK. Scale as your fleet grows.
           </p>
+
+          {/* Toggle */}
+          <div className={styles.toggle}>
+            <span className={`${styles.toggleLabel} ${!annual ? styles.toggleActive : ""}`}>Monthly</span>
+            <button
+              className={styles.toggleSwitch}
+              onClick={() => setAnnual(!annual)}
+              id="pricing-toggle"
+              aria-label="Toggle annual pricing"
+            >
+              <span className={`${styles.toggleKnob} ${annual ? styles.toggleKnobRight : ""}`} />
+            </button>
+            <span className={`${styles.toggleLabel} ${annual ? styles.toggleActive : ""}`}>
+              Annual
+              <span className={styles.saveBadge}>Save 20%</span>
+            </span>
+          </div>
         </div>
 
         {/* Grid */}
@@ -102,7 +131,7 @@ export function PricingSection() {
           {PLANS.map((p) => (
             <div
               key={p.id}
-              className={`glass-card ${styles.card} ${p.highlight ? styles.highlight : ""}`}
+              className={`glass-card ${styles.card} ${p.highlight ? styles.highlight : ""} reveal-child`}
               id={`pricing-${p.id}`}
             >
               {p.highlight && (
@@ -113,8 +142,8 @@ export function PricingSection() {
               <div className={styles.planName}>{p.name}</div>
               <div className={styles.planDesc}>{p.desc}</div>
               <div className={styles.priceRow}>
-                <span className={`${styles.price} ${p.highlight ? "gradient-text" : ""}`}>{p.price}</span>
-                <span className={styles.period}>{p.period}</span>
+                <span className={`${styles.price} ${p.highlight ? "gradient-text" : ""}`}>{formatPrice(p)}</span>
+                <span className={styles.period}>{p.priceMonthly > 0 ? "/month" : ""}</span>
               </div>
               <ul className={styles.features}>
                 {p.features.map((f) => (

@@ -1,4 +1,6 @@
+"use client";
 import styles from "./about-section.module.css";
+import { useScrollReveal } from "@/lib/use-scroll-reveal";
 
 const PILLARS = [
   {
@@ -31,8 +33,10 @@ const TEAM = [
 ];
 
 export function AboutSection() {
+  const sectionRef = useScrollReveal<HTMLElement>({ stagger: 80 });
+
   return (
-    <section className={`section ${styles.section}`} id="about">
+    <section className={`section ${styles.section} reveal-up`} id="about" ref={sectionRef}>
       <div className="container">
         {/* Header */}
         <div className={styles.header}>
@@ -97,6 +101,11 @@ export function AboutSection() {
                   <line x1="100" y1="120" x2="125" y2="155" stroke="rgba(59,130,246,0.3)" strokeWidth="0.8" strokeDasharray="3,3"/>
                   <line x1="55" y1="100" x2="100" y2="120" stroke="rgba(59,130,246,0.3)" strokeWidth="0.8" strokeDasharray="3,3"/>
                   <line x1="140" y1="95" x2="100" y2="120" stroke="rgba(59,130,246,0.3)" strokeWidth="0.8" strokeDasharray="3,3"/>
+                  {/* Flight path animation */}
+                  <circle r="3" fill="#f5a520" opacity="0.8" className={styles.flightDot}>
+                    <animateMotion dur="4s" repeatCount="indefinite"
+                      path="M80,60 L120,50 L140,95 L100,120 L75,150 L125,155 L100,120 L55,100 L80,60" />
+                  </circle>
                 </svg>
                 <div className={styles.mapLabel}>India Fleet Network</div>
               </div>
@@ -107,7 +116,7 @@ export function AboutSection() {
         {/* Pillars */}
         <div className={styles.pillars}>
           {PILLARS.map((p) => (
-            <div key={p.title} className={`glass-card ${styles.pillar}`}>
+            <div key={p.title} className={`glass-card ${styles.pillar} reveal-child`}>
               <span className={styles.pillarIcon}>{p.icon}</span>
               <h3 className={styles.pillarTitle}>{p.title}</h3>
               <p className={styles.pillarDesc}>{p.desc}</p>
@@ -120,7 +129,7 @@ export function AboutSection() {
           <h3 className={styles.teamTitle}>Leadership Team</h3>
           <div className={styles.teamGrid}>
             {TEAM.map((m) => (
-              <div key={m.name} className={`glass-card ${styles.teamCard}`}>
+              <div key={m.name} className={`glass-card ${styles.teamCard} reveal-child`}>
                 <div className={styles.avatar} style={{ background: m.bg }}>
                   {m.name.split(" ").map(n => n[0]).join("")}
                 </div>
