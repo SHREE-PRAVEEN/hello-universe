@@ -1,0 +1,470 @@
+.hero {
+  position: relative;
+  min-height: 100vh;
+  padding-top: 140px;
+  padding-bottom: 80px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Background */
+.bg {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.orb1 {
+  position: absolute;
+  top: -100px;
+  left: -100px;
+  width: 600px;
+  height: 600px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(0,197,232,0.13) 0%, transparent 70%);
+  filter: blur(60px);
+  animation: drift1 8s ease-in-out infinite;
+}
+.orb2 {
+  position: absolute;
+  top: 20%;
+  right: -150px;
+  width: 500px;
+  height: 500px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(245,165,32,0.10) 0%, transparent 70%);
+  filter: blur(80px);
+  animation: drift2 10s ease-in-out infinite;
+}
+.orb3 {
+  position: absolute;
+  bottom: -100px;
+  left: 30%;
+  width: 700px;
+  height: 400px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(30,93,189,0.08) 0%, transparent 70%);
+  filter: blur(100px);
+}
+.gradientMesh {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 20% 20%, rgba(0,197,232,0.06) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 80%, rgba(245,165,32,0.04) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 50%, rgba(37,99,235,0.03) 0%, transparent 60%);
+  animation: meshShift 12s ease-in-out infinite alternate;
+}
+@keyframes meshShift {
+  0% { opacity: 0.8; transform: scale(1); }
+  100% { opacity: 1; transform: scale(1.05); }
+}
+.gridOverlay {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(0,197,232,0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,197,232,0.05) 1px, transparent 1px);
+  background-size: 60px 60px;
+  mask-image: radial-gradient(ellipse at center, black 40%, transparent 80%);
+}
+
+@keyframes drift1 {
+  0%, 100% { transform: translate(0,0); }
+  50% { transform: translate(40px, 30px); }
+}
+@keyframes drift2 {
+  0%, 100% { transform: translate(0,0); }
+  50% { transform: translate(-30px, 20px); }
+}
+
+/* Content */
+.content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 24px;
+}
+
+.badge {
+  animation: fadeInUp 0.5s ease 0.1s both;
+}
+
+.headline {
+  font-family: 'Space Grotesk', system-ui, sans-serif;
+  font-size: clamp(2.5rem, 6vw, 4.5rem);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.025em;
+  color: #f0f6ff;
+  max-width: 860px;
+  animation: fadeInUp 0.5s ease 0.2s both;
+}
+
+.rotatingWord {
+  display: inline-block;
+  min-width: 200px;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+.wordVisible { opacity: 1; transform: translateY(0); }
+.wordHidden { opacity: 0; transform: translateY(-10px); }
+
+.sub {
+  font-size: clamp(1rem, 1.8vw, 1.15rem);
+  color: #94a3b8;
+  max-width: 680px;
+  line-height: 1.8;
+  animation: fadeInUp 0.5s ease 0.3s both;
+}
+
+.actions {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  justify-content: center;
+  animation: fadeInUp 0.5s ease 0.4s both;
+}
+
+/* Trust */
+.trust {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  animation: fadeInUp 0.5s ease 0.5s both;
+  margin-top: 8px;
+}
+.trustLabel {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #475569;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.trustLogos {
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.trustLogo {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #475569;
+  padding: 6px 14px;
+  border: 1px solid rgba(56,139,253,0.12);
+  border-radius: 99px;
+  transition: color 0.2s, border-color 0.2s;
+}
+.trustLogo:hover {
+  color: #94a3b8;
+  border-color: rgba(56,139,253,0.3);
+}
+
+/* ══════════════════════════════════════════════════════
+   ANIMATED DASHBOARD MOCKUP
+   ══════════════════════════════════════════════════════ */
+
+.dashboardWrapper {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 1100px;
+  margin: 60px auto 0;
+  padding: 0 24px;
+  animation: fadeInUp 0.7s ease 0.6s both;
+}
+
+.dashboardGlow {
+  position: absolute;
+  inset: -40px;
+  background: radial-gradient(ellipse at center, rgba(0,197,232,0.10) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.dashboard {
+  position: relative;
+  background: linear-gradient(145deg, rgba(6,18,32,0.98), rgba(3,13,26,0.95));
+  border: 1px solid rgba(0,197,232,0.2);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 24px 80px rgba(0,0,0,0.6), 0 0 40px rgba(0,197,232,0.08);
+}
+
+/* Dashboard Top Bar */
+.dashTopBar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 20px;
+  background: rgba(0,0,0,0.3);
+  border-bottom: 1px solid rgba(0,197,232,0.1);
+}
+.dashDots {
+  display: flex;
+  gap: 6px;
+}
+.dashDots span {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: block;
+}
+.dashUrl {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  color: #475569;
+  flex: 1;
+  text-align: center;
+}
+.dashStatus {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.7rem;
+  color: #10b981;
+  font-weight: 600;
+}
+.statusDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #10b981;
+  animation: pulseStatus 2s ease-in-out infinite;
+}
+@keyframes pulseStatus {
+  0%, 100% { opacity: 1; box-shadow: 0 0 4px #10b981; }
+  50% { opacity: 0.5; box-shadow: 0 0 12px #10b981; }
+}
+
+/* Dashboard Body */
+.dashBody {
+  display: grid;
+  grid-template-columns: 160px 1fr;
+  min-height: 320px;
+}
+
+/* Sidebar */
+.dashSidebar {
+  padding: 16px 12px;
+  border-right: 1px solid rgba(0,197,232,0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.sideItem {
+  font-size: 0.72rem;
+  color: #475569;
+  padding: 8px 10px;
+  border-radius: 8px;
+  cursor: default;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+.sideItemActive {
+  background: rgba(0,197,232,0.08);
+  color: #00c5e8;
+  border: 1px solid rgba(0,197,232,0.2);
+}
+
+/* Main */
+.dashMain {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Stats */
+.dashStats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+.dashStatCard {
+  padding: 14px 12px;
+  background: rgba(0,0,0,0.2);
+  border: 1px solid rgba(0,197,232,0.08);
+  border-radius: 10px;
+  text-align: center;
+}
+.dashStatValue {
+  font-family: 'Space Grotesk', system-ui, sans-serif;
+  font-size: 1.3rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+.dashStatLabel {
+  font-size: 0.65rem;
+  color: #475569;
+  margin-top: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Chart */
+.dashChart {
+  padding: 16px;
+  background: rgba(0,0,0,0.15);
+  border: 1px solid rgba(0,197,232,0.06);
+  border-radius: 10px;
+}
+.chartTitle {
+  font-size: 0.72rem;
+  color: #64748b;
+  margin-bottom: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.chartSvg {
+  width: 100%;
+  height: auto;
+}
+.chartLine {
+  stroke-dasharray: 1600;
+  stroke-dashoffset: 1600;
+  animation: drawLine 2s ease 1s forwards;
+}
+.chartArea {
+  opacity: 0;
+  animation: fadeChartArea 1s ease 2.5s forwards;
+}
+.chartDot {
+  opacity: 0;
+  animation: fadeInDot 0.3s ease forwards;
+  animation-delay: 2.5s;
+}
+@keyframes drawLine {
+  to { stroke-dashoffset: 0; }
+}
+@keyframes fadeChartArea {
+  to { opacity: 0.6; }
+}
+@keyframes fadeInDot {
+  to { opacity: 1; }
+}
+
+/* Map */
+.dashMap {
+  padding: 16px;
+  background: rgba(0,0,0,0.15);
+  border: 1px solid rgba(0,197,232,0.06);
+  border-radius: 10px;
+  position: relative;
+  min-height: 100px;
+}
+.mapGrid {
+  position: relative;
+  width: 100%;
+  height: 80px;
+  background:
+    linear-gradient(rgba(0,197,232,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,197,232,0.03) 1px, transparent 1px);
+  background-size: 30px 30px;
+  border-radius: 6px;
+}
+.dronePin {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+}
+.dronePinDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #00c5e8;
+  animation: pulseDrone 2s ease-in-out infinite;
+}
+.dronePinRing {
+  position: absolute;
+  top: -4px;
+  left: -4px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 1px solid rgba(0,197,232,0.4);
+  animation: expandDroneRing 2s ease-in-out infinite;
+}
+@keyframes pulseDrone {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.7; transform: scale(0.8); }
+}
+@keyframes expandDroneRing {
+  0% { transform: scale(1); opacity: 0.6; }
+  100% { transform: scale(2.5); opacity: 0; }
+}
+
+/* Floating cards */
+.floatCard {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  background: rgba(13,20,37,0.9);
+  border: 1px solid rgba(56,139,253,0.25);
+  border-radius: 12px;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+  white-space: nowrap;
+}
+.floatCard1 {
+  top: 15%;
+  left: 2%;
+  animation: float 4s ease-in-out infinite;
+}
+.floatCard2 {
+  bottom: 20%;
+  left: -2%;
+  animation: float 4s ease-in-out 1s infinite;
+}
+.floatCard3 {
+  top: 10%;
+  right: 2%;
+  animation: float 4s ease-in-out 2s infinite;
+}
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  box-shadow: 0 0 8px currentColor;
+}
+.cardTitle {
+  font-size: 0.7rem;
+  color: #475569;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 600;
+}
+.cardValue {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #f0f6ff;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 768px) {
+  .hero { padding-top: 100px; }
+  .floatCard { display: none; }
+  .trustLogos { gap: 10px; }
+  .dashBody { grid-template-columns: 1fr; }
+  .dashSidebar { display: none; }
+  .dashStats { grid-template-columns: repeat(2, 1fr); }
+}
