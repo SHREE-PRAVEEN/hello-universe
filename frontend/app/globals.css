@@ -13,8 +13,8 @@
   --bg-primary: #061d36;
   --bg-secondary: #061220;
   --bg-card: #0b1c30;
-  --bg-card-hover: #0f2238;
-  --border-subtle: rgba(0, 197, 232, 0.14);
+  --bg-card-hover: #798a9d;
+  --border-subtle: rgba(191, 203, 205, 0.14);
   --border-glow: rgba(0, 197, 232, 0.4);
 
   /* Brand colors from logo */
@@ -22,7 +22,7 @@
   /* bright cyan arcs (top) */
   --accent-gold: #f5a520;
   /* amber/gold arcs (bottom) */
-  --accent-blue: #1e5dbd;
+  --accent-blue: #edf0f6;
   /* deep compass navy */
   --accent-indigo: #2563eb;
   /* mid blue */
