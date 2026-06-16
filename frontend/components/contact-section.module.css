@@ -121,8 +121,9 @@
 }
 .input::placeholder { color: #334155; }
 .input:focus {
-  border-color: rgba(59,130,246,0.5);
-  box-shadow: 0 0 0 3px rgba(59,130,246,0.08);
+  border-color: rgba(0,197,232,0.6);
+  box-shadow: 0 0 0 3px rgba(0,197,232,0.15), 0 0 20px rgba(0,197,232,0.1);
+  background: rgba(0,197,232,0.05);
 }
 select.input { cursor: pointer; }
 .textarea { resize: vertical; min-height: 100px; }
@@ -141,6 +142,11 @@ select.input { cursor: pointer; }
   gap: 16px;
   padding: 48px 24px;
   text-align: center;
+  animation: successPop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+@keyframes successPop {
+  0% { opacity: 0; transform: scale(0.9); }
+  100% { opacity: 1; transform: scale(1); }
 }
 .successIcon { font-size: 3rem; }
 .successState h3 {

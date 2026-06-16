@@ -103,6 +103,19 @@
   flex-shrink: 0;
 }
 
+.nav.scrolled .actions :global(.btn-primary) {
+  position: relative;
+  overflow: hidden;
+}
+.nav.scrolled .actions :global(.btn-primary)::after {
+  content: '';
+  position: absolute;
+  top: 0; left: -100%; width: 50%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+  animation: badgeShimmer 4s infinite;
+  pointer-events: none;
+}
+
 /* Hamburger */
 .hamburger {
   display: none;

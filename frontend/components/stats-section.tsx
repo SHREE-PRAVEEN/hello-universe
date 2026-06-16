@@ -46,7 +46,7 @@ function StatCard({ stat, animate }: { stat: typeof STATS[0]; animate: boolean }
 }
 
 export function StatsSection() {
-  const ref = useRef<HTMLDivElement>(null);
+  const ref = useRef<HTMLElement>(null);
   const [animate, setAnimate] = useState(false);
   const sectionRef = useScrollReveal<HTMLElement>({ stagger: 100 });
 
@@ -62,7 +62,7 @@ export function StatsSection() {
   return (
     <section className={`section ${styles.section} reveal-up`} ref={(el) => {
       (sectionRef as React.MutableRefObject<HTMLElement | null>).current = el;
-      (ref as React.MutableRefObject<HTMLDivElement | null>).current = el;
+      (ref as React.MutableRefObject<HTMLElement | null>).current = el;
     }}>
       <div className="divider" />
       <div className="container">

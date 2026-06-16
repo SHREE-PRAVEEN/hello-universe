@@ -104,7 +104,12 @@
   letter-spacing: -0.025em;
   color: #f0f6ff;
   max-width: 860px;
-  animation: fadeInUp 0.5s ease 0.2s both;
+  animation: fadeInUp 0.5s ease 0.2s both, textPulse 8s ease-in-out infinite alternate;
+}
+
+@keyframes textPulse {
+  0% { text-shadow: 0 0 0 transparent; }
+  100% { text-shadow: 0 0 20px rgba(0, 197, 232, 0.2); }
 }
 
 .rotatingWord {
@@ -114,6 +119,14 @@
 }
 .wordVisible { opacity: 1; transform: translateY(0); }
 .wordHidden { opacity: 0; transform: translateY(-10px); }
+
+.cursor {
+  display: inline-block;
+  color: var(--accent-cyan);
+  font-weight: 300;
+  animation: blink 1s step-end infinite;
+  margin-left: 4px;
+}
 
 .sub {
   font-size: clamp(1rem, 1.8vw, 1.15rem);
@@ -196,6 +209,23 @@
   border-radius: 16px;
   overflow: hidden;
   box-shadow: 0 24px 80px rgba(0,0,0,0.6), 0 0 40px rgba(0,197,232,0.08);
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+}
+
+.dashboard:hover {
+  transform: translateY(-8px) scale(1.01);
+  box-shadow: 0 32px 90px rgba(0,0,0,0.7), 0 0 60px rgba(0,197,232,0.2);
+}
+
+.dashboard::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(transparent 50%, rgba(0, 197, 232, 0.02) 50%);
+  background-size: 100% 4px;
+  pointer-events: none;
+  z-index: 10;
+  opacity: 0.5;
 }
 
 /* Dashboard Top Bar */

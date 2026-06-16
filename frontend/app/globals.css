@@ -57,6 +57,14 @@
 
 html {
   scroll-behavior: smooth;
+  scrollbar-color: var(--accent-blue) var(--bg-primary);
+  scrollbar-width: thin;
+}
+
+/* ── View Transitions ── */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.4s;
 }
 
 body {
@@ -104,6 +112,26 @@ body {
   background-clip: text;
 }
 
+/* ── Utility: glow and shimmer ── */
+.glow-text {
+  text-shadow: 0 0 10px rgba(0, 197, 232, 0.5), 0 0 20px rgba(0, 197, 232, 0.3);
+}
+
+.shimmer-text {
+  background: linear-gradient(90deg, var(--text-primary) 0%, #fff 50%, var(--text-primary) 100%);
+  background-size: 200% auto;
+  color: transparent;
+  -webkit-background-clip: text;
+  background-clip: text;
+  animation: shimmer 2s linear infinite;
+}
+
+/* Focus outline for accessibility */
+*:focus-visible {
+  outline: 2px solid var(--accent-cyan);
+  outline-offset: 2px;
+}
+
 /* ── Animated gradient border card ── */
 .glass-card {
   background: linear-gradient(145deg, rgba(13, 20, 37, 0.9), rgba(10, 15, 30, 0.7));
@@ -114,9 +142,9 @@ body {
 }
 
 .glass-card:hover {
-  border-color: var(--border-glow);
-  box-shadow: 0 8px 40px rgba(0, 197, 232, 0.13), 0 2px 8px rgba(0, 0, 0, 0.4);
-  transform: translateY(-2px);
+  border-color: var(--accent-cyan);
+  box-shadow: 0 8px 40px rgba(0, 197, 232, 0.2), 0 2px 8px rgba(0, 0, 0, 0.4);
+  transform: translateY(-4px);
 }
 
 /* ── Buttons ── */
@@ -142,7 +170,8 @@ body {
 .btn-primary:hover {
   transform: translateY(-2px);
   box-shadow: 0 8px 32px rgba(0, 197, 232, 0.5);
-  opacity: 0.95;
+  opacity: 1;
+  background: linear-gradient(135deg, #00dcf5, var(--accent-indigo));
 }
 
 .btn-secondary {
@@ -166,7 +195,8 @@ body {
 .btn-secondary:hover {
   background: rgba(0, 197, 232, 0.08);
   border-color: var(--accent-cyan);
-  box-shadow: 0 0 20px rgba(0, 197, 232, 0.2);
+  box-shadow: 0 0 20px rgba(0, 197, 232, 0.2), inset 0 0 10px rgba(0, 197, 232, 0.1);
+  transform: translateY(-2px);
 }
 
 /* ── Badge/Tag ── */
@@ -332,6 +362,13 @@ body {
   transform: translateY(0);
 }
 
+/* Staggered animation utility */
+.animate-stagger > *:nth-child(1) { animation-delay: 0.1s; }
+.animate-stagger > *:nth-child(2) { animation-delay: 0.2s; }
+.animate-stagger > *:nth-child(3) { animation-delay: 0.3s; }
+.animate-stagger > *:nth-child(4) { animation-delay: 0.4s; }
+.animate-stagger > *:nth-child(5) { animation-delay: 0.5s; }
+
 /* ══════════════════════════════════════════════════════
    PAGE TRANSITION STYLES
    ══════════════════════════════════════════════════════ */
@@ -450,8 +487,9 @@ body {
 }
 
 .search-input:focus {
-  border-color: rgba(59, 130, 246, 0.5);
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.08);
+  border-color: rgba(0, 197, 232, 0.6);
+  box-shadow: 0 0 0 3px rgba(0, 197, 232, 0.15), 0 0 20px rgba(0, 197, 232, 0.1);
+  background: rgba(0, 197, 232, 0.05);
 }
 
 .filter-btn {

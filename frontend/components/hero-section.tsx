@@ -51,6 +51,7 @@ export function HeroSection() {
           >
             {ROTATING_WORDS[wordIdx]}
           </span>
+          <span className={styles.cursor}>|</span>
         </h1>
 
         {/* Sub */}
@@ -115,7 +116,7 @@ export function HeroSection() {
             {/* Main content */}
             <div className={styles.dashMain}>
               {/* Stats row */}
-              <div className={styles.dashStats}>
+              <div className={`animate-stagger ${styles.dashStats}`}>
                 {[
                   { label: "Active Drones", value: "142", color: "#10b981" },
                   { label: "Missions Today", value: "38", color: "#3b82f6" },

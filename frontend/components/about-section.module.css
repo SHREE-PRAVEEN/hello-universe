@@ -84,12 +84,12 @@
   filter: drop-shadow(0 0 4px rgba(245,165,32,0.6));
 }
 @keyframes pulseDot {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
+  0%, 100% { opacity: 1; filter: drop-shadow(0 0 8px currentColor); }
+  50% { opacity: 0.5; filter: drop-shadow(0 0 2px currentColor); }
 }
 @keyframes expandRing {
-  0% { opacity: 0.6; transform: scale(1); }
-  100% { opacity: 0; transform: scale(2); }
+  0% { opacity: 0.8; transform: scale(1); box-shadow: 0 0 10px currentColor inset; }
+  100% { opacity: 0; transform: scale(2.5); box-shadow: 0 0 0 currentColor inset; }
 }
 .mapLabel {
   text-align: center;
@@ -150,6 +150,10 @@
   align-items: center;
   gap: 12px;
   text-align: center;
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.teamCard:hover {
+  transform: translateY(-6px);
 }
 .avatar {
   width: 64px;

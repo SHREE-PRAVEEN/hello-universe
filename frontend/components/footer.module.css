@@ -62,9 +62,11 @@
   transition: all 0.2s ease;
 }
 .social:hover {
-  color: #94a3b8;
-  border-color: rgba(56,139,253,0.4);
-  background: rgba(59,130,246,0.06);
+  color: #f0f6ff;
+  border-color: rgba(0,197,232,0.6);
+  background: rgba(0,197,232,0.15);
+  box-shadow: 0 0 15px rgba(0,197,232,0.3);
+  transform: translateY(-2px);
 }
 
 /* Link columns */
@@ -89,7 +91,14 @@
   text-decoration: none;
   transition: color 0.2s;
 }
-.colLink:hover { color: #94a3b8; }
+.colLink:hover {
+  background: linear-gradient(90deg, #00c5e8, #f5a520);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
+  transform: translateX(2px);
+}
 
 /* Bottom */
 .bottom {

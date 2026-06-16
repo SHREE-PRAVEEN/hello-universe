@@ -14,13 +14,42 @@
   text-align: center;
   position: relative;
   overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 30px rgba(0, 197, 232, 0.15), 0 0 40px rgba(0, 197, 232, 0.1) inset;
+}
+
 .card::before {
   content: '';
   position: absolute;
   inset: 0;
   background: linear-gradient(135deg, rgba(59,130,246,0.04) 0%, transparent 60%);
   pointer-events: none;
+}
+
+.card::after {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  background: linear-gradient(90deg, transparent, rgba(0, 197, 232, 0.6), transparent);
+  background-size: 200% 100%;
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  animation: borderPan 2s linear infinite;
+}
+
+.card:hover::after {
+  opacity: 1;
+}
+
+@keyframes borderPan {
+  0% { background-position: 100% 0; }
+  100% { background-position: -100% 0; }
 }
 
 .value {
