@@ -1,0 +1,66 @@
+.section {
+  padding: 60px 0;
+  background: linear-gradient(180deg, var(--bg-primary) 0%, var(--bg-secondary) 50%, var(--bg-primary) 100%);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+
+.card {
+  padding: 32px 28px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(59,130,246,0.04) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+.value {
+  font-family: 'Space Grotesk', system-ui, sans-serif;
+  font-size: 2.8rem;
+  font-weight: 700;
+  line-height: 1;
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 2px;
+  margin-bottom: 12px;
+}
+.prefix {
+  font-size: 1.5rem;
+  color: #f5a520;
+  font-weight: 600;
+}
+.suffix {
+  font-size: 1.8rem;
+  color: #00c5e8;
+  font-weight: 600;
+}
+
+.label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #f0f6ff;
+  margin-bottom: 4px;
+}
+.sub {
+  font-size: 0.75rem;
+  color: #475569;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+@media (max-width: 900px) {
+  .grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 480px) {
+  .grid { grid-template-columns: 1fr; }
+}
