@@ -43,7 +43,7 @@ export function ContactSection() {
                 <span className={styles.contactIcon}>✉️</span>
                 <div>
                   <div className={styles.contactLabel}>Sales</div>
-                  <div className={styles.contactValue}>hellouniverse.robotics.com</div>
+                  <div className={styles.contactValue}>hello.universe.robotics@gmail.com</div>
                 </div>
               </div>
               
