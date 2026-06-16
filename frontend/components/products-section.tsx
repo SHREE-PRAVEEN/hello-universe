@@ -116,7 +116,7 @@ const PRODUCTS = [
     id: "orbitops-core",
     name: "Hello Universe Core",
     tagline: "Fleet Command Center",
-    price: "₹45,000",
+    price: "₹14,000",
     period: "/month",
     Illustration: FleetDashboardIllustration,
     badge: "Most Popular",
@@ -153,7 +153,7 @@ const PRODUCTS = [
       "Weather & wind API integration",
       "Farmer portal with reports",
     ],
-    cta: "Request Demo",
+    cta: "Comming soon",
     ctaStyle: "secondary",
   },
   {
@@ -175,7 +175,7 @@ const PRODUCTS = [
       "Air-gapped deployment option",
       "24×7 dedicated support",
     ],
-    cta: "Contact Sales",
+    cta: "Comming Soon",
     ctaStyle: "secondary",
   },
   {
@@ -197,7 +197,7 @@ const PRODUCTS = [
       "Custom ERP/GIS integrations",
       "White-label mobile app",
     ],
-    cta: "Request Demo",
+    cta: "Comming Soon",
     ctaStyle: "secondary",
   },
 ];

@@ -36,28 +36,22 @@ export function ContactSection() {
                 <span className={styles.contactIcon}>📍</span>
                 <div>
                   <div className={styles.contactLabel}>Headquarters</div>
-                  <div className={styles.contactValue}>Bengaluru, Karnataka, India</div>
+                  <div className={styles.contactValue}>Ranchi, Jharkhand, India</div>
                 </div>
               </div>
               <div className={styles.contactItem}>
                 <span className={styles.contactIcon}>✉️</span>
                 <div>
                   <div className={styles.contactLabel}>Sales</div>
-                  <div className={styles.contactValue}>sales@hellouniv.in</div>
+                  <div className={styles.contactValue}>hellouniverse.robotics.com</div>
                 </div>
               </div>
-              <div className={styles.contactItem}>
-                <span className={styles.contactIcon}>🛡️</span>
-                <div>
-                  <div className={styles.contactLabel}>Defense & Government</div>
-                  <div className={styles.contactValue}>defense@hellouniv.in</div>
-                </div>
-              </div>
+              
               <div className={styles.contactItem}>
                 <span className={styles.contactIcon}>📞</span>
                 <div>
                   <div className={styles.contactLabel}>Phone</div>
-                  <div className={styles.contactValue}>+91 80 4567 8900</div>
+                  <div className={styles.contactValue}>+91 91 0244 4374</div>
                 </div>
               </div>
             </div>
