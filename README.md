@@ -1,3 +1,3 @@
-https://hello-universe-omega.vercel.app/
+https://hellouniverse.vercel.app/
 
 #hellouniverrse
