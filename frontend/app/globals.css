@@ -10,7 +10,7 @@
 
 :root {
   /* ── Hello Universe brand palette (from logo) ── */
-  --bg-primary: #030d1a;
+  --bg-primary: #061d36;
   --bg-secondary: #061220;
   --bg-card: #0b1c30;
   --bg-card-hover: #0f2238;
@@ -85,7 +85,7 @@ body {
 
 /* ── Selection ── */
 ::selection {
-  background: rgba(59, 130, 246, 0.3);
+  background: rgba(212, 217, 224, 0.3);
   color: #fff;
 }
 
