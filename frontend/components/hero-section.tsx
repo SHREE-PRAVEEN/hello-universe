@@ -113,9 +113,9 @@ export function HeroSection() {
               ))}
             </div>
 
-            {/* Main content */}
-            <div className={styles.dashMain}>
-              {/* Stats row */}
+            {/* Main content 
+            <div className={styles.dashMain}>*/}
+              {/* Stats row 
               <div className={`animate-stagger ${styles.dashStats}`}>
                 {[
                   { label: "Active Drones", value: "142", color: "#10b981" },
@@ -128,7 +128,7 @@ export function HeroSection() {
                     <div className={styles.dashStatLabel}>{s.label}</div>
                   </div>
                 ))}
-              </div>
+              </div>*/}
 
               {/* Chart area */}
               <div className={styles.dashChart}>
