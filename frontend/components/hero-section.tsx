@@ -73,7 +73,7 @@ export function HeroSection() {
           </a>
         </div>
 
-        {/* Trust strip */}
+        {/* Trust strip 
         <div className={styles.trust}>
           <span className={styles.trustLabel}>Trusted by India&apos;s leading OEMs</span>
           <div className={styles.trustLogos}>
@@ -81,7 +81,7 @@ export function HeroSection() {
               <span key={name} className={styles.trustLogo}>{name}</span>
             ))}
           </div>
-        </div>
+        </div>*/}
       </div>
 
       {/* Animated Dashboard Mockup */}
