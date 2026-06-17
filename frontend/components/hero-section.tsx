@@ -56,8 +56,7 @@ export function HeroSection() {
 
         {/* Sub */}
         <p className={styles.sub}>
-          Hello Universe is the enterprise-grade B2B2B SaaS middleware that transforms every Indian hardware OEM into a
-          fully software-enabled fleet operator — with real-time telemetry, DGCA compliance, and AI-driven mission planning.
+          Hello Universe is building a unified fleet management RobOps platform for Drone ,Robots and Automation systems.
         </p>
 
         {/* Actions */}
