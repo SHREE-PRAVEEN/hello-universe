@@ -1,0 +1,47 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: #0a0d12;
+}
+
+.bp-grid {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+  background-size: 44px 44px;
+}
+
+::selection {
+  background-color: #ffb02033;
+  color: #e9edf3;
+}
+
+:focus-visible {
+  outline: 2px solid #ffb020;
+  outline-offset: 2px;
+}
+
+.hu-input {
+  width: 100%;
+  background-color: #171c25;
+  border: 1px solid #232a36;
+  border-radius: 2px;
+  padding: 0.65rem 0.85rem;
+  color: #e9edf3;
+  font-size: 0.9rem;
+}
+
+.hu-input::placeholder {
+  color: #8b94a3;
+}
+
+.hu-input:focus {
+  outline: none;
+  border-color: #ffb020;
+}
