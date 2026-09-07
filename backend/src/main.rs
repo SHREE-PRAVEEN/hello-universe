@@ -31,15 +31,19 @@ async fn main() -> anyhow::Result<()> {
     let config = Config::from_env();
 
     let db = PgPoolOptions::new()
-        .max_connections(10)
+        .max_connections(config.db_max_connections)
+        .min_connections(0)
+        .acquire_timeout(std::time::Duration::from_secs(15))
         .connect(&config.database_url)
-        .await?;
+        .await
+        .map_err(|error| anyhow::anyhow!("could not connect to PostgreSQL: {error}"))?;
 
     let http = reqwest::Client::builder()
         .timeout(std::time::Duration::from_secs(15))
         .build()?;
 
     let state = AppState { db, config, http };
+    let port = state.config.port;
 
     // Background poller for self-hosted USDT-TRC20 payments: checks pending
     // orders against TronGrid every ~20s so we don't depend solely on the
@@ -76,8 +80,9 @@ async fn main() -> anyhow::Result<()> {
         .layer(cors)
         .with_state(state);
 
-    let listener = tokio::net::TcpListener::bind("0.0.0.0:8080").await?;
-    tracing::info!("Hello Universe backend listening on :8080");
+    let address = format!("0.0.0.0:{}", port);
+    let listener = tokio::net::TcpListener::bind(&address).await?;
+    tracing::info!("Hello Universe backend listening on {}", address);
     axum::serve(listener, app).await?;
 
     Ok(())

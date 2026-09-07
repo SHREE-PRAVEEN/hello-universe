@@ -13,8 +13,15 @@ use crate::models::*;
 use crate::payu;
 use crate::AppState;
 
-pub async fn health() -> &'static str {
-    "ok"
+pub async fn health(State(state): State<AppState>) -> Result<&'static str, StatusCode> {
+    sqlx::query("SELECT 1")
+        .execute(&state.db)
+        .await
+        .map(|_| "ok")
+        .map_err(|error| {
+            tracing::error!("database health check failed: {}", error);
+            StatusCode::SERVICE_UNAVAILABLE
+        })
 }
 
 // ---------- AUTH ----------
