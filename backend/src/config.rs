@@ -34,7 +34,7 @@ impl Config {
         dotenvy::dotenv().ok();
         Self {
             database_url: env::var("DATABASE_URL")
-                .unwrap_or_else(|_| "postgres://hu:hu_password@localhost:5432/hello_universe".into()),
+                .unwrap_or_else(|_| "postgres://shreepraveen:Shreepraveen%4023@localhost:5432/hello_universe".into()),
             jwt_secret: env::var("JWT_SECRET").unwrap_or_else(|_| "change_me_dev_secret".into()),
             payu_merchant_key: env::var("PAYU_MERCHANT_KEY").unwrap_or_default(),
             payu_merchant_salt: env::var("PAYU_MERCHANT_SALT").unwrap_or_default(),
