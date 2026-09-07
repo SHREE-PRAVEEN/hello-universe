@@ -1,6 +1,12 @@
 @config "../../tailwind.config.js";
 @import "tailwindcss";
 
+:root {
+  --font-display: "Trebuchet MS", sans-serif;
+  --font-body: "Segoe UI", sans-serif;
+  --font-mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+}
+
 html {
   scroll-behavior: smooth;
 }
