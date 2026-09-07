@@ -3,8 +3,6 @@ use std::env;
 #[derive(Clone)]
 pub struct Config {
     pub database_url: String,
-    pub port: u16,
-    pub db_max_connections: u32,
     pub jwt_secret: String,
     pub payu_merchant_key: String,
     pub payu_merchant_salt: String,
@@ -35,12 +33,8 @@ impl Config {
     pub fn from_env() -> Self {
         dotenvy::dotenv().ok();
         Self {
-            database_url: env::var("DATABASE_URL").expect("DATABASE_URL must be set"),
-            port: env::var("PORT").ok().and_then(|v| v.parse().ok()).unwrap_or(8080),
-            db_max_connections: env::var("DB_MAX_CONNECTIONS")
-                .ok()
-                .and_then(|v| v.parse().ok())
-                .unwrap_or(10),
+            database_url: env::var("DATABASE_URL")
+                .unwrap_or_else(|_| "postgres://shreepraveen:Shreepraveen%4023@localhost:5432/hello_universe".into()),
             jwt_secret: env::var("JWT_SECRET").unwrap_or_else(|_| "change_me_dev_secret".into()),
             payu_merchant_key: env::var("PAYU_MERCHANT_KEY").unwrap_or_default(),
             payu_merchant_salt: env::var("PAYU_MERCHANT_SALT").unwrap_or_default(),
