@@ -31,12 +31,12 @@ pub struct Config {
     pub usdt_trc20_contract_address: String,
 }
 
-impl Conhttps://hello-universe-a63c.onrender.comfig {
+impl Config {
     pub fn from_env() -> Self {
         dotenvy::dotenv().ok();
         Self {
             database_url: env::var("DATABASE_URL")
-                .unwrap_or_else(|_| "postgresql://neondb_owner:npg_5xkRD6vVCruf@ep-green-block-a5unm8r6-pooler.us-east-2.aws.neon.tech/neondb?sslmode=require&channel_binding=require".into()),
+                .unwrap_or_else(|_| "postgres://shreepraveen:Shreepraveen%4023@localhost:5432/hello_universe".into()),
             port: env::var("PORT").ok().and_then(|value| value.parse().ok()).unwrap_or(8080),
             db_max_connections: env::var("DB_MAX_CONNECTIONS")
                 .ok()
