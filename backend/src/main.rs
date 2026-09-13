@@ -37,6 +37,7 @@ async fn main() -> anyhow::Result<()> {
         .connect(&config.database_url)
         .await
         .map_err(|error| anyhow::anyhow!("could not connect to PostgreSQL: {error}"))?;
+    ensure_user_profile_columns(&db).await?;
 
     let http = reqwest::Client::builder()
         .timeout(std::time::Duration::from_secs(15))
@@ -85,5 +86,18 @@ async fn main() -> anyhow::Result<()> {
     tracing::info!("Hello Universe backend listening on {}", address);
     axum::serve(listener, app).await?;
 
+    Ok(())
+}
+
+async fn ensure_user_profile_columns(db: &sqlx::PgPool) -> anyhow::Result<()> {
+    sqlx::query("ALTER TABLE users ADD COLUMN IF NOT EXISTS phone TEXT NOT NULL DEFAULT ''")
+        .execute(db)
+        .await?;
+    sqlx::query("ALTER TABLE users ADD COLUMN IF NOT EXISTS address TEXT NOT NULL DEFAULT ''")
+        .execute(db)
+        .await?;
+    sqlx::query("ALTER TABLE users ADD COLUMN IF NOT EXISTS profession TEXT NOT NULL DEFAULT 'other'")
+        .execute(db)
+        .await?;
     Ok(())
 }

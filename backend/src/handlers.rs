@@ -31,7 +31,16 @@ pub async fn signup(
     Json(payload): Json<SignupRequest>,
 ) -> Result<impl IntoResponse, (StatusCode, String)> {
     if payload.password.len() < 8 {
-        return Err((StatusCode::BAD_REQUEST, "Password must be at least 8 characters".into()));
+        return Err((
+            StatusCode::BAD_REQUEST,
+            "Password must be at least 8 characters".into(),
+        ));
+    }
+    if !matches!(
+        payload.profession.as_str(),
+        "student" | "working" | "creator" | "other"
+    ) {
+        return Err((StatusCode::BAD_REQUEST, "Invalid profession".into()));
     }
 
     let existing: Option<Uuid> = sqlx::query_scalar("SELECT id FROM users WHERE email = $1")
@@ -47,22 +56,30 @@ pub async fn signup(
     let hash = auth::hash_password(&payload.password).map_err(internal_err)?;
 
     let user: User = sqlx::query_as(
-        r#"INSERT INTO users (name, email, password_hash)
-           VALUES ($1, $2, $3)
+        r#"INSERT INTO users (name, email, password_hash, phone, address, profession)
+           VALUES ($1, $2, $3, $4, $5, $6)
            RETURNING id, name, email, password_hash, created_at"#,
     )
     .bind(&payload.name)
     .bind(&payload.email)
     .bind(&hash)
+    .bind(&payload.phone)
+    .bind(&payload.address)
+    .bind(&payload.profession)
     .fetch_one(&state.db)
     .await
     .map_err(internal_err)?;
 
-    let token = auth::create_token(user.id, &user.email, &state.config.jwt_secret).map_err(internal_err)?;
+    let token =
+        auth::create_token(user.id, &user.email, &state.config.jwt_secret).map_err(internal_err)?;
 
     Ok(Json(AuthResponse {
         token,
-        user: PublicUser { id: user.id, name: user.name, email: user.email },
+        user: PublicUser {
+            id: user.id,
+            name: user.name,
+            email: user.email,
+        },
     }))
 }
 

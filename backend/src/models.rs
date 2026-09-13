@@ -32,6 +32,9 @@ pub struct SignupRequest {
     pub name: String,
     pub email: String,
     pub password: String,
+    pub phone: String,
+    pub address: String,
+    pub profession: String,
 }
 
 #[derive(Debug, Deserialize)]

@@ -9,6 +9,9 @@ export default function SignupPage() {
   const router = useRouter();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [address, setAddress] = useState("");
+  const [profession, setProfession] = useState<"student" | "working" | "creator" | "other">("other");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -18,7 +21,7 @@ export default function SignupPage() {
     setError(null);
     setLoading(true);
     try {
-      const { token } = await api.signup(name, email, password);
+      const { token } = await api.signup(name, email, password, phone, address, profession);
       setToken(token);
       router.push("/products");
     } catch (err) {
@@ -36,7 +39,7 @@ export default function SignupPage() {
       </p>
 
       <form onSubmit={handleSubmit} className="mt-10 space-y-5">
-        <Field label="Name">
+        <Field label="Full name">
           <input
             required
             value={name}
@@ -54,6 +57,38 @@ export default function SignupPage() {
             className="hu-input"
             placeholder="you@example.com"
           />
+        </Field>
+        <Field label="Phone number">
+          <input
+            required
+            type="tel"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            className="hu-input"
+            placeholder="+91 98765 43210"
+          />
+        </Field>
+        <Field label="Address">
+          <textarea
+            required
+            value={address}
+            onChange={(e) => setAddress(e.target.value)}
+            className="hu-input min-h-24 resize-y"
+            placeholder="Your address"
+          />
+        </Field>
+        <Field label="Profession">
+          <select
+            required
+            value={profession}
+            onChange={(e) => setProfession(e.target.value as typeof profession)}
+            className="hu-input"
+          >
+            <option value="student">Student</option>
+            <option value="working">Working</option>
+            <option value="creator">Creator</option>
+            <option value="other">Other</option>
+          </select>
         </Field>
         <Field label="Password">
           <input

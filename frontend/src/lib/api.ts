@@ -106,10 +106,17 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
 }
 
 export const api = {
-  signup: (name: string, email: string, password: string) =>
+  signup: (
+    name: string,
+    email: string,
+    password: string,
+    phone: string,
+    address: string,
+    profession: "student" | "working" | "creator" | "other",
+  ) =>
     request<{ token: string; user: PublicUser }>("/api/auth/signup", {
       method: "POST",
-      body: JSON.stringify({ name, email, password }),
+      body: JSON.stringify({ name, email, password, phone, address, profession }),
     }),
 
   login: (email: string, password: string) =>
