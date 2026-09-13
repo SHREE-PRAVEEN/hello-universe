@@ -3,6 +3,8 @@ use std::env;
 #[derive(Clone)]
 pub struct Config {
     pub database_url: String,
+    pub port: u16,
+    pub db_max_connections: u32,
     pub jwt_secret: String,
     pub payu_merchant_key: String,
     pub payu_merchant_salt: String,
@@ -34,7 +36,12 @@ impl Config {
         dotenvy::dotenv().ok();
         Self {
             database_url: env::var("DATABASE_URL")
-                .unwrap_or_else(|_| "postgres://shreepraveen:Shreepraveen%4023@localhost:5432/hello_universe".into()),
+                .unwrap_or_else(|_| "postgresql://neondb_owner:npg_5xkRD6vVCruf@ep-green-block-a5unm8r6-pooler.us-east-2.aws.neon.tech/neondb?sslmode=require&channel_binding=require".into()),
+            port: env::var("PORT").ok().and_then(|value| value.parse().ok()).unwrap_or(8080),
+            db_max_connections: env::var("DB_MAX_CONNECTIONS")
+                .ok()
+                .and_then(|value| value.parse().ok())
+                .unwrap_or(10),
             jwt_secret: env::var("JWT_SECRET").unwrap_or_else(|_| "change_me_dev_secret".into()),
             payu_merchant_key: env::var("PAYU_MERCHANT_KEY").unwrap_or_default(),
             payu_merchant_salt: env::var("PAYU_MERCHANT_SALT").unwrap_or_default(),
