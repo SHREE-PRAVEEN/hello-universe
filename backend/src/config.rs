@@ -31,7 +31,7 @@ pub struct Config {
     pub usdt_trc20_contract_address: String,
 }
 
-impl Config {
+impl Conhttps://hello-universe-a63c.onrender.comfig {
     pub fn from_env() -> Self {
         dotenvy::dotenv().ok();
         Self {
