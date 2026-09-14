@@ -90,14 +90,108 @@ async fn main() -> anyhow::Result<()> {
 }
 
 async fn ensure_user_profile_columns(db: &sqlx::PgPool) -> anyhow::Result<()> {
-    sqlx::query("ALTER TABLE users ADD COLUMN IF NOT EXISTS phone TEXT NOT NULL DEFAULT ''")
+    // Create UUID extension if it doesn't exist
+    sqlx::query("CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\"")
         .execute(db)
         .await?;
-    sqlx::query("ALTER TABLE users ADD COLUMN IF NOT EXISTS address TEXT NOT NULL DEFAULT ''")
+
+    // Create users table if it doesn't exist
+    sqlx::query(
+        r#"
+        CREATE TABLE IF NOT EXISTS users (
+            id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+            name TEXT NOT NULL,
+            email TEXT NOT NULL UNIQUE,
+            password_hash TEXT NOT NULL,
+            phone TEXT NOT NULL DEFAULT '',
+            address TEXT NOT NULL DEFAULT '',
+            profession TEXT NOT NULL DEFAULT 'other'
+                CHECK (profession IN ('student', 'working', 'creator', 'other')),
+            created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+        )
+        "#,
+    )
+    .execute(db)
+    .await?;
+
+    // Create products table if it doesn't exist
+    sqlx::query(
+        r#"
+        CREATE TABLE IF NOT EXISTS products (
+            id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+            name TEXT NOT NULL,
+            slug TEXT NOT NULL UNIQUE,
+            category TEXT NOT NULL,
+            description TEXT NOT NULL,
+            price_inr NUMERIC(10, 2) NOT NULL,
+            is_digital BOOLEAN NOT NULL DEFAULT true,
+            download_url TEXT,
+            image_url TEXT,
+            active BOOLEAN NOT NULL DEFAULT true,
+            created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+        )
+        "#,
+    )
+    .execute(db)
+    .await?;
+
+    // Create orders table if it doesn't exist
+    sqlx::query(
+        r#"
+        CREATE TABLE IF NOT EXISTS orders (
+            id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+            user_id UUID NOT NULL REFERENCES users(id),
+            product_id UUID NOT NULL REFERENCES products(id),
+            amount_inr NUMERIC(10, 2) NOT NULL,
+            status TEXT NOT NULL DEFAULT 'pending',
+            delivered BOOLEAN NOT NULL DEFAULT false,
+            created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+            updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+            payment_method TEXT NOT NULL DEFAULT 'payu',
+            payu_txnid TEXT UNIQUE,
+            payu_mihpayid TEXT,
+            gateway_payment_id TEXT UNIQUE,
+            gateway_pay_address TEXT,
+            gateway_pay_currency TEXT,
+            gateway_pay_amount NUMERIC(20, 8),
+            crypto_pay_address TEXT,
+            crypto_expected_amount NUMERIC(20, 6),
+            crypto_tx_hash TEXT
+        )
+        "#,
+    )
+    .execute(db)
+    .await?;
+
+    // Create indexes
+    sqlx::query("CREATE INDEX IF NOT EXISTS idx_orders_user ON orders(user_id)")
         .execute(db)
         .await?;
-    sqlx::query("ALTER TABLE users ADD COLUMN IF NOT EXISTS profession TEXT NOT NULL DEFAULT 'other'")
+    sqlx::query("CREATE INDEX IF NOT EXISTS idx_orders_txnid ON orders(payu_txnid)")
         .execute(db)
         .await?;
+    sqlx::query("CREATE INDEX IF NOT EXISTS idx_orders_gateway_payment_id ON orders(gateway_payment_id)")
+        .execute(db)
+        .await?;
+    sqlx::query(
+        "CREATE INDEX IF NOT EXISTS idx_orders_pending_crypto ON orders(payment_method, status) WHERE payment_method = 'usdt_trc20'"
+    )
+    .execute(db)
+    .await?;
+
+    // Insert seed products if they don't exist
+    sqlx::query(
+        r#"
+        INSERT INTO products (name, slug, category, description, price_inr, is_digital, download_url, image_url)
+        VALUES
+        ('HU Vision SDK', 'hu-vision-sdk', 'software', 'Computer vision SDK for object detection, tracking and scene understanding on edge devices.', 4999.00, true, 'https://example.com/downloads/hu-vision-sdk.zip', '/products/vision-sdk.png'),
+        ('HU Autonomy Stack', 'hu-autonomy-stack', 'software', 'Perception-planning-control software stack for mobile robots.', 9999.00, true, 'https://example.com/downloads/hu-autonomy-stack.zip', '/products/autonomy-stack.png'),
+        ('HU Agent Framework', 'hu-agent-framework', 'ai', 'Multimodal AI agent framework for robotics decision-making.', 2999.00, true, 'https://example.com/downloads/hu-agent-framework.zip', '/products/agent-framework.png')
+        ON CONFLICT DO NOTHING
+        "#,
+    )
+    .execute(db)
+    .await?;
+
     Ok(())
 }
