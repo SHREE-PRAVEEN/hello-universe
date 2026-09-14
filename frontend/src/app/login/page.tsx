@@ -23,7 +23,11 @@ export default function LoginPage() {
       setStoredUser(user);
       // Trigger storage event so header updates
       window.dispatchEvent(new Event("storage"));
-      router.push("/products");
+      if (!user.verified) {
+        router.push(`/verify?email=${encodeURIComponent(user.email)}`);
+      } else {
+        router.push("/products");
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Login failed. Please check your credentials.");
     } finally {

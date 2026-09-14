@@ -41,7 +41,11 @@ export default function SignupPage() {
       setToken(token);
       setStoredUser(user);
       window.dispatchEvent(new Event("storage"));
-      router.push("/products");
+      if (!user.verified) {
+        router.push(`/verify?email=${encodeURIComponent(user.email)}`);
+      } else {
+        router.push("/products");
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Sign up failed. Please try again.");
     } finally {

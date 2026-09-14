@@ -63,6 +63,8 @@ async fn main() -> anyhow::Result<()> {
         .route("/api/health", get(handlers::health))
         .route("/api/auth/signup", post(handlers::signup))
         .route("/api/auth/login", post(handlers::login))
+        .route("/api/auth/verify-otp", post(handlers::verify_otp))
+        .route("/api/auth/resend-otp", post(handlers::resend_otp))
         .route("/api/products", get(handlers::list_products))
         .route("/api/products/:slug", get(handlers::get_product))
         .route("/api/payu/success", post(handlers::payu_success))
@@ -107,7 +109,9 @@ async fn ensure_user_profile_columns(db: &sqlx::PgPool) -> anyhow::Result<()> {
             address TEXT NOT NULL DEFAULT '',
             profession TEXT NOT NULL DEFAULT 'other'
                 CHECK (profession IN ('student', 'working', 'creator', 'other')),
-            verified BOOLEAN NOT NULL DEFAULT true,
+            verified BOOLEAN NOT NULL DEFAULT false,
+            otp_code TEXT,
+            otp_expires_at TIMESTAMPTZ,
             created_at TIMESTAMPTZ NOT NULL DEFAULT now()
         )
         "#,
@@ -115,8 +119,14 @@ async fn ensure_user_profile_columns(db: &sqlx::PgPool) -> anyhow::Result<()> {
     .execute(db)
     .await?;
 
-    // Add verified column to existing tables if needed
-    sqlx::query("ALTER TABLE users ADD COLUMN IF NOT EXISTS verified BOOLEAN NOT NULL DEFAULT true;")
+    // Add new columns to existing tables if needed
+    sqlx::query("ALTER TABLE users ADD COLUMN IF NOT EXISTS verified BOOLEAN NOT NULL DEFAULT false;")
+        .execute(db)
+        .await?;
+    sqlx::query("ALTER TABLE users ADD COLUMN IF NOT EXISTS otp_code TEXT;")
+        .execute(db)
+        .await?;
+    sqlx::query("ALTER TABLE users ADD COLUMN IF NOT EXISTS otp_expires_at TIMESTAMPTZ;")
         .execute(db)
         .await?;
 

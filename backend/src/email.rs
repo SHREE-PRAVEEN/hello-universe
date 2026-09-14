@@ -66,3 +66,36 @@ pub fn send_software_email(
     mailer.send(&email)?;
     Ok(())
 }
+
+pub fn send_otp_email(
+    config: &Config,
+    to_email: &str,
+    to_name: &str,
+    otp_code: &str,
+) -> anyhow::Result<()> {
+    let body = format!(
+        "Hi {to_name},\n\n\
+        Your Hello Universe verification code is: {otp_code}\n\n\
+        This code will expire in 15 minutes.\n\n\
+        — Hello Universe",
+        to_name = to_name,
+        otp_code = otp_code,
+    );
+
+    let email = Message::builder()
+        .from(config.smtp_from.parse()?)
+        .to(format!("{} <{}>", to_name, to_email).parse()?)
+        .subject("Your Hello Universe Verification Code")
+        .header(ContentType::TEXT_PLAIN)
+        .body(body)?;
+
+    let creds = Credentials::new(config.smtp_user.clone(), config.smtp_pass.clone());
+
+    let mailer = SmtpTransport::starttls_relay(&config.smtp_host)?
+        .port(config.smtp_port)
+        .credentials(creds)
+        .build();
+
+    mailer.send(&email)?;
+    Ok(())
+}

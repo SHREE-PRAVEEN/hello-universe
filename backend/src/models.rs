@@ -14,6 +14,10 @@ pub struct User {
     pub password_hash: String,
     pub created_at: DateTime<Utc>,
     pub verified: bool,
+    #[serde(skip_serializing)]
+    pub otp_code: Option<String>,
+    #[serde(skip_serializing)]
+    pub otp_expires_at: Option<DateTime<Utc>>,
 }
 
 impl FromRow<'_, PgRow> for User {
@@ -25,6 +29,8 @@ impl FromRow<'_, PgRow> for User {
             password_hash: row.try_get("password_hash")?,
             created_at: row.try_get("created_at")?,
             verified: row.try_get("verified")?,
+            otp_code: row.try_get("otp_code")?,
+            otp_expires_at: row.try_get("otp_expires_at")?,
         })
     }
 }
@@ -43,6 +49,17 @@ pub struct SignupRequest {
 pub struct LoginRequest {
     pub email: String,
     pub password: String,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct VerifyOtpRequest {
+    pub email: String,
+    pub otp_code: String,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct ResendOtpRequest {
+    pub email: String,
 }
 
 #[derive(Debug, Serialize)]

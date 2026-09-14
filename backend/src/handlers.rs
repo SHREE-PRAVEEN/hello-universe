@@ -4,6 +4,7 @@ use axum::{
     response::{IntoResponse, Json, Redirect},
     Extension,
 };
+use rand_core::{OsRng, RngCore};
 use uuid::Uuid;
 
 use crate::auth::{self, Claims};
@@ -55,10 +56,13 @@ pub async fn signup(
 
     let hash = auth::hash_password(&payload.password).map_err(internal_err)?;
 
+    let otp = format!("{:06}", OsRng.next_u32() % 1000000);
+    let expires = chrono::Utc::now().checked_add_signed(chrono::Duration::minutes(15)).unwrap();
+
     let user: User = sqlx::query_as(
-        r#"INSERT INTO users (name, email, password_hash, phone, address, profession, verified)
-           VALUES ($1, $2, $3, $4, $5, $6, true)
-           RETURNING id, name, email, password_hash, created_at, verified"#,
+        r#"INSERT INTO users (name, email, password_hash, phone, address, profession, verified, otp_code, otp_expires_at)
+           VALUES ($1, $2, $3, $4, $5, $6, false, $7, $8)
+           RETURNING id, name, email, password_hash, created_at, verified, otp_code, otp_expires_at"#,
     )
     .bind(&payload.name)
     .bind(&payload.email)
@@ -66,9 +70,13 @@ pub async fn signup(
     .bind(&payload.phone)
     .bind(&payload.address)
     .bind(&payload.profession)
+    .bind(&otp)
+    .bind(expires)
     .fetch_one(&state.db)
     .await
     .map_err(internal_err)?;
+
+    let _ = email::send_otp_email(&state.config, &payload.email, &payload.name, &otp);
 
     let token =
         auth::create_token(user.id, &user.email, &state.config.jwt_secret).map_err(internal_err)?;
@@ -107,6 +115,73 @@ pub async fn login(
         token,
         user: PublicUser { id: user.id, name: user.name, email: user.email, verified: user.verified },
     }))
+}
+
+pub async fn verify_otp(
+    State(state): State<AppState>,
+    Json(payload): Json<VerifyOtpRequest>,
+) -> Result<impl IntoResponse, (StatusCode, String)> {
+    let existing: Option<(Uuid, Option<String>, Option<chrono::DateTime<chrono::Utc>>)> = sqlx::query_as(
+        "SELECT id, otp_code, otp_expires_at FROM users WHERE email = $1"
+    )
+    .bind(&payload.email)
+    .fetch_optional(&state.db)
+    .await
+    .map_err(internal_err)?;
+
+    let (user_id, otp_code, expires) = existing.ok_or((StatusCode::NOT_FOUND, "User not found".to_string()))?;
+
+    let otp_code = otp_code.ok_or((StatusCode::BAD_REQUEST, "No OTP found".to_string()))?;
+    let expires = expires.ok_or((StatusCode::BAD_REQUEST, "No OTP found".to_string()))?;
+
+    if chrono::Utc::now() > expires {
+        return Err((StatusCode::BAD_REQUEST, "OTP has expired".to_string()));
+    }
+    if otp_code != payload.otp_code {
+        return Err((StatusCode::BAD_REQUEST, "Invalid OTP".to_string()));
+    }
+
+    sqlx::query(
+        "UPDATE users SET verified = true, otp_code = NULL, otp_expires_at = NULL WHERE id = $1"
+    )
+    .bind(user_id)
+    .execute(&state.db)
+    .await
+    .map_err(internal_err)?;
+
+    Ok(Json(serde_json::json!({ "success": true })))
+}
+
+pub async fn resend_otp(
+    State(state): State<AppState>,
+    Json(payload): Json<ResendOtpRequest>,
+) -> Result<impl IntoResponse, (StatusCode, String)> {
+    let existing: Option<(Uuid, String)> = sqlx::query_as(
+        "SELECT id, name FROM users WHERE email = $1"
+    )
+    .bind(&payload.email)
+    .fetch_optional(&state.db)
+    .await
+    .map_err(internal_err)?;
+
+    let (user_id, name) = existing.ok_or((StatusCode::NOT_FOUND, "User not found".to_string()))?;
+
+    let otp = format!("{:06}", OsRng.next_u32() % 1000000);
+    let expires = chrono::Utc::now().checked_add_signed(chrono::Duration::minutes(15)).unwrap();
+
+    sqlx::query(
+        "UPDATE users SET otp_code = $1, otp_expires_at = $2 WHERE id = $3"
+    )
+    .bind(&otp)
+    .bind(expires)
+    .bind(user_id)
+    .execute(&state.db)
+    .await
+    .map_err(internal_err)?;
+
+    let _ = email::send_otp_email(&state.config, &payload.email, &name, &otp);
+
+    Ok(Json(serde_json::json!({ "success": true })))
 }
 
 pub async fn me(

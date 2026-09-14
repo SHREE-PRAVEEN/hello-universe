@@ -122,6 +122,18 @@ export const api = {
       body: JSON.stringify({ email, password }),
     }),
 
+  verifyOtp: (email: string, otpCode: string) =>
+    request<{ success: boolean }>("/api/auth/verify-otp", {
+      method: "POST",
+      body: JSON.stringify({ email, otp_code: otpCode }),
+    }),
+
+  resendOtp: (email: string) =>
+    request<{ success: boolean }>("/api/auth/resend-otp", {
+      method: "POST",
+      body: JSON.stringify({ email }),
+    }),
+
   me: () => request<PublicUser>("/api/me"),
 
   listProducts: () => request<Product[]>("/api/products"),
