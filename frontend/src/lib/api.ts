@@ -25,7 +25,7 @@ export type Product = {
   created_at: string;
 };
 
-export type PaymentMethod = "payu" | "upi" | "nowpayments";
+export type PaymentMethod = "upi" | "nowpayments";
 
 export type Order = {
   id: string;
@@ -39,9 +39,6 @@ export type Order = {
 
   payment_method: PaymentMethod;
 
-  payu_txnid: string | null;
-  payu_mihpayid: string | null;
-
   gateway_payment_id: string | null;
   gateway_pay_address: string | null;
   gateway_pay_currency: string | null;
@@ -52,32 +49,9 @@ export type Order = {
   crypto_tx_hash: string | null;
 };
 
-export type PayUPaymentParams = {
-  key: string;
-  txnid: string;
-  amount: string;
-  productinfo: string;
-  firstname: string;
-  email: string;
-  phone: string;
-  surl: string;
-  furl: string;
-  hash: string;
-  action_url: string;
-};
-
-export type CryptoPaymentInfo = {
-  pay_address: string;
-  pay_amount: string;
-  pay_currency: string;
-  expires_in_seconds: number | null;
-};
-
 export type CreateOrderResponse = {
   order_id: string;
   payment_method: PaymentMethod;
-  payu: PayUPaymentParams | null;
-  crypto: CryptoPaymentInfo | null;
 };
 
 function getToken(): string | null {
@@ -91,6 +65,24 @@ export function setToken(token: string) {
 
 export function clearToken() {
   window.localStorage.removeItem("hu_token");
+}
+
+export function getStoredUser(): PublicUser | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const s = window.localStorage.getItem("hu_user");
+    return s ? JSON.parse(s) : null;
+  } catch {
+    return null;
+  }
+}
+
+export function setStoredUser(user: PublicUser) {
+  window.localStorage.setItem("hu_user", JSON.stringify(user));
+}
+
+export function clearStoredUser() {
+  window.localStorage.removeItem("hu_user");
 }
 
 async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
@@ -136,19 +128,13 @@ export const api = {
 
   getProduct: (slug: string) => request<Product>(`/api/products/${slug}`),
 
-  createOrder: (productId: string, paymentMethod: PaymentMethod) =>
-    request<CreateOrderResponse>("/api/orders", {
+  createUpiOrder: (productId: string) =>
+    request<{ order_id: string }>("/api/orders", {
       method: "POST",
-      body: JSON.stringify({ product_id: productId, payment_method: paymentMethod }),
+      body: JSON.stringify({ product_id: productId, payment_method: "upi" }),
     }),
 
   myOrders: () => request<Order[]>("/api/orders"),
 
   getOrder: (orderId: string) => request<Order>(`/api/orders/${orderId}`),
-
-  /// Manually nudges the backend to check a self-hosted USDT-TRC20 order
-  /// against the blockchain right now, instead of waiting for the ~20s
-  /// background poll.
-  checkCryptoPayment: (orderId: string) =>
-    request<Order>(`/api/orders/${orderId}/check-crypto`, { method: "POST" }),
 };
