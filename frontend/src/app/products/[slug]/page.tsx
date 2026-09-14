@@ -5,9 +5,9 @@ import { useParams, useRouter } from "next/navigation";
 import { api, Product, PayUPaymentParams, CryptoPaymentInfo, PaymentMethod, Order } from "@/lib/api";
 
 const METHODS: { id: PaymentMethod; label: string; blurb: string }[] = [
-  { id: "payu", label: "Card / UPI / Netbanking", blurb: "Pay with PayU — instant confirmation." },
-  { id: "nowpayments", label: "Crypto — quick checkout", blurb: "Pay USDT via a hosted gateway, any chain it supports." },
-  { id: "usdt_trc20", label: "Crypto — send directly", blurb: "Send USDT (TRC-20) straight from your own wallet." },
+  { id: "payu", label: "Card / Netbanking", blurb: "Pay with PayU — instant confirmation." },
+  { id: "upi", label: "UPI Payment", blurb: "Pay via UPI. Confirmation email will be sent." },
+  { id: "nowpayments", label: "International Payment", blurb: "Pay internationally using NOWPayments gateway." },
 ];
 
 export default function ProductDetailPage() {

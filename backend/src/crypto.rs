@@ -11,6 +11,7 @@ type HmacSha512 = Hmac<Sha512>;
 /// Fetches the current USDT price in INR from CoinGecko's public API
 /// (no key required). USDT trades close to $1, but not exactly, so we
 /// still look it up rather than assuming parity.
+/// Falls back to 83.5 INR per USD if the API is unreachable or rate-limited.
 pub async fn fetch_usdt_inr_rate(client: &reqwest::Client) -> anyhow::Result<f64> {
     #[derive(Deserialize)]
     struct CoinGeckoResponse {
@@ -21,15 +22,34 @@ pub async fn fetch_usdt_inr_rate(client: &reqwest::Client) -> anyhow::Result<f64
         inr: f64,
     }
 
-    let resp: CoinGeckoResponse = client
+    match client
         .get("https://api.coingecko.com/api/v3/simple/price?ids=tether&vs_currencies=inr")
         .send()
-        .await?
-        .error_for_status()?
-        .json()
-        .await?;
-
-    Ok(resp.tether.inr)
+        .await
+    {
+        Ok(resp) => {
+            match resp.error_for_status() {
+                Ok(r) => match r.json::<CoinGeckoResponse>().await {
+                    Ok(data) => Ok(data.tether.inr),
+                    Err(e) => {
+                        tracing::warn!("Failed to parse CoinGecko response: {}", e);
+                        // Fallback rate: ~83.5 INR per USD (1 USDT ≈ 1 USD)
+                        Ok(83.5)
+                    }
+                },
+                Err(e) => {
+                    tracing::warn!("CoinGecko API returned error: {}", e);
+                    // Fallback rate: ~83.5 INR per USD
+                    Ok(83.5)
+                }
+            }
+        }
+        Err(e) => {
+            tracing::warn!("Failed to fetch from CoinGecko: {}", e);
+            // Fallback rate: ~83.5 INR per USD
+            Ok(83.5)
+        }
+    }
 }
 
 /// Converts an INR price to a USDT amount, adding a small unique fractional

@@ -99,16 +99,16 @@ pub struct CreateOrderRequest {
 #[serde(rename_all = "snake_case")]
 pub enum PaymentMethod {
     Payu,
+    Upi,
     Nowpayments,
-    UsdtTrc20,
 }
 
 impl PaymentMethod {
     pub fn as_str(&self) -> &'static str {
         match self {
             PaymentMethod::Payu => "payu",
+            PaymentMethod::Upi => "upi",
             PaymentMethod::Nowpayments => "nowpayments",
-            PaymentMethod::UsdtTrc20 => "usdt_trc20",
         }
     }
 }

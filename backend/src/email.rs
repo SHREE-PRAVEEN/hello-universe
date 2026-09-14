@@ -4,6 +4,31 @@ use lettre::{Message, SmtpTransport, Transport};
 
 use crate::config::Config;
 
+/// Send a generic email
+pub async fn send_email(
+    config: &Config,
+    to_email: &str,
+    subject: &str,
+    body: &str,
+) -> anyhow::Result<()> {
+    let email = Message::builder()
+        .from(config.smtp_from.parse()?)
+        .to(to_email.parse()?)
+        .subject(subject)
+        .header(ContentType::TEXT_PLAIN)
+        .body(body.to_string())?;
+
+    let creds = Credentials::new(config.smtp_user.clone(), config.smtp_pass.clone());
+
+    let mailer = SmtpTransport::starttls_relay(&config.smtp_host)?
+        .port(config.smtp_port)
+        .credentials(creds)
+        .build();
+
+    mailer.send(&email)?;
+    Ok(())
+}
+
 pub fn send_software_email(
     config: &Config,
     to_email: &str,

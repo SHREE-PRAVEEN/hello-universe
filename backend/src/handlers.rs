@@ -267,39 +267,51 @@ pub async fn create_order(
             }))
         }
 
-        PaymentMethod::UsdtTrc20 => {
-            if state.config.usdt_trc20_wallet_address.is_empty() {
-                return Err((StatusCode::SERVICE_UNAVAILABLE, "Direct USDT payments are not configured".into()));
-            }
-
-            let rate = crypto::fetch_usdt_inr_rate(&state.http).await.map_err(internal_err)?;
-            let amount = crypto::usdt_amount_with_nonce(product.price_inr, rate, &order_id);
-
+        PaymentMethod::Upi => {
             sqlx::query(
                 r#"INSERT INTO orders
-                   (id, user_id, product_id, amount_inr, status, payment_method,
-                    crypto_pay_address, crypto_expected_amount)
-                   VALUES ($1, $2, $3, $4, 'pending', 'usdt_trc20', $5, $6)"#,
+                   (id, user_id, product_id, amount_inr, status, payment_method)
+                   VALUES ($1, $2, $3, $4, 'pending', 'upi')"#,
             )
             .bind(order_id)
             .bind(user.id)
             .bind(product.id)
             .bind(product.price_inr)
-            .bind(&state.config.usdt_trc20_wallet_address)
-            .bind(rust_decimal::Decimal::try_from(amount).unwrap_or_default())
             .execute(&state.db)
             .await
             .map_err(internal_err)?;
 
+            // Send email confirmation to admin
+            let subject = format!("New UPI Payment Order - {}", product.name);
+            let body = format!(
+                "New UPI payment order received!\n\n\
+                Order ID: {}\n\
+                Product: {}\n\
+                Amount: ₹{}\n\
+                Customer Name: {}\n\
+                Customer Email: {}\n\
+                Customer Phone: {}\n\n\
+                Please process this payment and confirm to the customer.",
+                order_id, product.name, product.price_inr, user.name, user.email, "9999999999"
+            );
+
+            // Send email to admin (non-blocking, ignore errors)
+            let _ = email::send_email(
+                &state.config,
+                "hello.universe.robotics@gmail.com",
+                &subject,
+                &body,
+            ).await;
+
             Ok(Json(CreateOrderResponse {
                 order_id,
-                payment_method: PaymentMethod::UsdtTrc20,
+                payment_method: PaymentMethod::Upi,
                 payu: None,
                 crypto: Some(CryptoPaymentInfo {
-                    pay_address: state.config.usdt_trc20_wallet_address.clone(),
-                    pay_amount: format!("{:.6}", amount),
-                    pay_currency: "USDT (TRC-20)".to_string(),
-                    expires_in_seconds: Some(3600),
+                    pay_address: "UPI Payment".to_string(),
+                    pay_amount: format!("{:.2}", product.price_inr),
+                    pay_currency: "INR".to_string(),
+                    expires_in_seconds: None,
                 }),
             }))
         }

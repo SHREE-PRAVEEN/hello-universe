@@ -25,7 +25,7 @@ export type Product = {
   created_at: string;
 };
 
-export type PaymentMethod = "payu" | "nowpayments" | "usdt_trc20";
+export type PaymentMethod = "payu" | "upi" | "nowpayments";
 
 export type Order = {
   id: string;
