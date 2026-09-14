@@ -13,6 +13,7 @@ pub struct User {
     #[serde(skip_serializing)]
     pub password_hash: String,
     pub created_at: DateTime<Utc>,
+    pub verified: bool,
 }
 
 impl FromRow<'_, PgRow> for User {
@@ -23,6 +24,7 @@ impl FromRow<'_, PgRow> for User {
             email: row.try_get("email")?,
             password_hash: row.try_get("password_hash")?,
             created_at: row.try_get("created_at")?,
+            verified: row.try_get("verified")?,
         })
     }
 }
@@ -54,6 +56,7 @@ pub struct PublicUser {
     pub id: Uuid,
     pub name: String,
     pub email: String,
+    pub verified: bool,
 }
 
 #[derive(Debug, Serialize, Clone)]

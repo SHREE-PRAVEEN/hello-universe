@@ -11,12 +11,14 @@ CREATE TABLE IF NOT EXISTS users (
     address TEXT NOT NULL DEFAULT '',
     profession TEXT NOT NULL DEFAULT 'other'
         CHECK (profession IN ('student', 'working', 'creator', 'other')),
+    verified BOOLEAN NOT NULL DEFAULT true,
     created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
 ALTER TABLE users ADD COLUMN IF NOT EXISTS phone TEXT NOT NULL DEFAULT '';
 ALTER TABLE users ADD COLUMN IF NOT EXISTS address TEXT NOT NULL DEFAULT '';
 ALTER TABLE users ADD COLUMN IF NOT EXISTS profession TEXT NOT NULL DEFAULT 'other';
+ALTER TABLE users ADD COLUMN IF NOT EXISTS verified BOOLEAN NOT NULL DEFAULT true;
 
 CREATE TABLE IF NOT EXISTS products (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),

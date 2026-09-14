@@ -6,7 +6,7 @@ import { api, Product } from "@/lib/api";
 
 // ─── Payment methods ──────────────────────────────────────────────────────────
 const NOWPAYMENTS_LINK = "https://nowpayments.io/payment/?iid=6340102955";
-const UPI_ID = "hello.universe.robotics@oksbi";
+const UPI_ID = "9102444374@upi";
 const ADMIN_EMAIL = "hello.universe.robotics@gmail.com";
 
 type Method = "nowpayments" | "upi";
@@ -343,6 +343,17 @@ function UpiInstructionsPanel({
           Open any UPI app (GPay, PhonePe, Paytm, etc.) and send the exact
           amount to:
         </p>
+
+        {/* UPI QR Code */}
+        <div className="flex justify-center mb-6 mt-2">
+          <div className="p-2 bg-white rounded-xl shadow-lg border border-line/40">
+            <img 
+              src={`https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=upi://pay?pa=${UPI_ID}&pn=HelloUniverse`}
+              alt="UPI QR Code"
+              className="w-40 h-40 object-contain rounded"
+            />
+          </div>
+        </div>
 
         {/* UPI ID */}
         <div className="flex items-center justify-between gap-3 bg-ink/60 border border-line rounded-lg px-4 py-3 mb-3">

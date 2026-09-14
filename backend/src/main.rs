@@ -107,12 +107,18 @@ async fn ensure_user_profile_columns(db: &sqlx::PgPool) -> anyhow::Result<()> {
             address TEXT NOT NULL DEFAULT '',
             profession TEXT NOT NULL DEFAULT 'other'
                 CHECK (profession IN ('student', 'working', 'creator', 'other')),
+            verified BOOLEAN NOT NULL DEFAULT true,
             created_at TIMESTAMPTZ NOT NULL DEFAULT now()
         )
         "#,
     )
     .execute(db)
     .await?;
+
+    // Add verified column to existing tables if needed
+    sqlx::query("ALTER TABLE users ADD COLUMN IF NOT EXISTS verified BOOLEAN NOT NULL DEFAULT true;")
+        .execute(db)
+        .await?;
 
     // Create products table if it doesn't exist
     sqlx::query(

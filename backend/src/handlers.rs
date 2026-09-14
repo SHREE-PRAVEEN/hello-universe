@@ -56,9 +56,9 @@ pub async fn signup(
     let hash = auth::hash_password(&payload.password).map_err(internal_err)?;
 
     let user: User = sqlx::query_as(
-        r#"INSERT INTO users (name, email, password_hash, phone, address, profession)
-           VALUES ($1, $2, $3, $4, $5, $6)
-           RETURNING id, name, email, password_hash, created_at"#,
+        r#"INSERT INTO users (name, email, password_hash, phone, address, profession, verified)
+           VALUES ($1, $2, $3, $4, $5, $6, true)
+           RETURNING id, name, email, password_hash, created_at, verified"#,
     )
     .bind(&payload.name)
     .bind(&payload.email)
@@ -79,6 +79,7 @@ pub async fn signup(
             id: user.id,
             name: user.name,
             email: user.email,
+            verified: user.verified,
         },
     }))
 }
@@ -88,7 +89,7 @@ pub async fn login(
     Json(payload): Json<LoginRequest>,
 ) -> Result<impl IntoResponse, (StatusCode, String)> {
     let user: User = sqlx::query_as(
-        "SELECT id, name, email, password_hash, created_at FROM users WHERE email = $1",
+        "SELECT id, name, email, password_hash, created_at, verified FROM users WHERE email = $1",
     )
     .bind(&payload.email)
     .fetch_optional(&state.db)
@@ -104,7 +105,7 @@ pub async fn login(
 
     Ok(Json(AuthResponse {
         token,
-        user: PublicUser { id: user.id, name: user.name, email: user.email },
+        user: PublicUser { id: user.id, name: user.name, email: user.email, verified: user.verified },
     }))
 }
 
@@ -121,7 +122,7 @@ pub async fn me(
     .await
     .map_err(internal_err)?;
 
-    Ok(Json(PublicUser { id: user.id, name: user.name, email: user.email }))
+    Ok(Json(PublicUser { id: user.id, name: user.name, email: user.email, verified: user.verified }))
 }
 
 // ---------- PRODUCTS ----------
@@ -174,7 +175,7 @@ pub async fn create_order(
     let user_id = Uuid::parse_str(&claims.sub).map_err(internal_err)?;
 
     let user: User = sqlx::query_as(
-        "SELECT id, name, email, password_hash, created_at FROM users WHERE id = $1",
+        "SELECT id, name, email, password_hash, created_at, verified FROM users WHERE id = $1",
     )
     .bind(user_id)
     .fetch_one(&state.db)
@@ -510,7 +511,7 @@ pub async fn deliver_product(state: &AppState, order_id: Uuid, user_id: Uuid, pr
     .unwrap_or(None);
 
     let user: Option<User> = sqlx::query_as(
-        "SELECT id, name, email, password_hash, created_at FROM users WHERE id = $1",
+        "SELECT id, name, email, password_hash, created_at, verified FROM users WHERE id = $1",
     )
     .bind(user_id)
     .fetch_optional(&state.db)
