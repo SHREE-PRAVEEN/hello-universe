@@ -20,7 +20,22 @@ export default function ProductDetailPage() {
   const [payuParams, setPayuParams] = useState<PayUPaymentParams | null>(null);
   const [cryptoInfo, setCryptoInfo] = useState<CryptoPaymentInfo | null>(null);
   const [orderId, setOrderId] = useState<string | null>(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
+
+  useEffect(() => {
+    // Check if user is logged in
+    const checkLoggedIn = () => {
+      const token = typeof window !== "undefined" ? window.localStorage.getItem("hu_token") : null;
+      setIsLoggedIn(!!token);
+    };
+    
+    checkLoggedIn();
+    
+    // Listen for storage changes (user logs in from another tab or after redirect)
+    window.addEventListener("storage", checkLoggedIn);
+    return () => window.removeEventListener("storage", checkLoggedIn);
+  }, []);
 
   useEffect(() => {
     api
@@ -57,6 +72,13 @@ export default function ProductDetailPage() {
 
   async function handleBuy() {
     if (!product) return;
+    
+    // Check if user is logged in
+    if (!isLoggedIn) {
+      router.push("/login");
+      return;
+    }
+    
     setError(null);
     setBuying(true);
     try {
@@ -65,11 +87,13 @@ export default function ProductDetailPage() {
       if (result.payu) setPayuParams(result.payu);
       if (result.crypto) setCryptoInfo(result.crypto);
     } catch (e) {
-      if (e instanceof Error && e.message.toLowerCase().includes("unauthorized")) {
+      const errorMsg = e instanceof Error ? e.message : "";
+      if (errorMsg.includes("401") || errorMsg.toLowerCase().includes("unauthorized")) {
+        setIsLoggedIn(false);
         router.push("/login");
         return;
       }
-      setError(e instanceof Error ? e.message : "Could not start checkout");
+      setError(errorMsg || "Could not start checkout");
     } finally {
       setBuying(false);
     }
@@ -108,40 +132,55 @@ export default function ProductDetailPage() {
 
         {!cryptoInfo && !payuParams && (
           <>
-            <fieldset className="mt-8">
-              <legend className="mb-3 text-sm text-dim">How would you like to pay?</legend>
-              <div className="space-y-2">
-                {METHODS.map((m) => (
-                  <label
-                    key={m.id}
-                    className={`flex cursor-pointer items-start gap-3 rounded-sm border p-4 transition ${
-                      method === m.id ? "border-signal bg-signal/5" : "border-line hover:border-dim"
-                    }`}
-                  >
-                    <input
-                      type="radio"
-                      name="payment_method"
-                      className="mt-1"
-                      checked={method === m.id}
-                      onChange={() => setMethod(m.id)}
-                    />
-                    <span>
-                      <span className="block text-sm font-medium text-paper">{m.label}</span>
-                      <span className="block text-xs text-dim">{m.blurb}</span>
-                    </span>
-                  </label>
-                ))}
+            {!isLoggedIn ? (
+              <div className="mt-8">
+                <p className="mb-4 text-sm text-dim">You need to log in to purchase this product.</p>
+                <button
+                  onClick={() => router.push("/login")}
+                  className="w-full rounded-sm bg-signal py-3 text-sm font-medium text-ink transition hover:bg-signal/90"
+                >
+                  Log in to continue
+                </button>
               </div>
-            </fieldset>
+            ) : (
+              <>
+                <fieldset className="mt-8">
+                  <legend className="mb-3 text-sm text-dim">How would you like to pay?</legend>
+                  <div className="space-y-2">
+                    {METHODS.map((m) => (
+                      <label
+                        key={m.id}
+                        className={`flex cursor-pointer items-start gap-3 rounded-sm border p-4 transition ${
+                          method === m.id ? "border-signal bg-signal/5" : "border-line hover:border-dim"
+                        }`}
+                      >
+                        <input
+                          type="radio"
+                          name="payment_method"
+                          className="mt-1"
+                          checked={method === m.id}
+                          onChange={() => setMethod(m.id)}
+                        />
+                        <span>
+                          <span className="block text-sm font-medium text-paper">{m.label}</span>
+                          <span className="block text-xs text-dim">{m.blurb}</span>
+                        </span>
+                      </label>
+                    ))}
+                  </div>
+                </fieldset>
 
-            <button
-              onClick={handleBuy}
-              disabled={buying}
-              className="mt-8 w-full rounded-sm bg-signal py-3 text-sm font-medium text-ink transition hover:bg-signal/90 disabled:opacity-50"
-            >
-              {buying ? "Preparing checkout…" : "Buy now"}
-            </button>
+                <button
+                  onClick={handleBuy}
+                  disabled={buying}
+                  className="mt-8 w-full rounded-sm bg-signal py-3 text-sm font-medium text-ink transition hover:bg-signal/90 disabled:opacity-50"
+                >
+                  {buying ? "Preparing checkout…" : "Buy now"}
+                </button>
+              </>
+            )}
           </>
+        )}
         )}
 
         {cryptoInfo && (
